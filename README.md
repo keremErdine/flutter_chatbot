@@ -1,16 +1,8 @@
-# flutter_chatbot
+# Flutter Chatbot
 
-A new Flutter project.
+A chatbot made using flutter and langchain, with openais api.
+To run it with your openAi api key, create api_key.dart at the same level as main.dart and add this line:
 
-## Getting Started
+String apiKey = {Your api key here.};
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This project is meant to read documents to answer your questions, howewer thats a wip.
