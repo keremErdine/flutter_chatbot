@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:bloc/bloc.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter_chatbot/api_key.dart';
@@ -25,8 +27,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
-    //lang_chain.TextLoader loader = lang_chain.TextLoader(state.filePaths[0]);
-    //final docs = await loader.load();
     emit(state.addMessage(event.message));
     if (event.message.sender == Sender.user) {
       add(AppMessageWritten(
