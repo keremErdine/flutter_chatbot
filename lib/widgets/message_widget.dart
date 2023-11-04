@@ -30,7 +30,7 @@ class MessageWidget extends StatelessWidget {
         child: SizedBox(
           width: width * 20 / 100,
           child: Text(
-            message.message,
+            message.context,
             textAlign: align,
             style: Theme.of(context).textTheme.bodyLarge,
           ),

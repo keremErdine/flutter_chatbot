@@ -49,6 +49,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
+  chromadb:
+    dependency: transitive
+    description:
+      name: chromadb
+      sha256: "8161ef3982aeb48d56d604f01ce0d54581840986e6677503fedffa1c96194976"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   clock:
     dependency: transitive
     description:
@@ -65,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.2"
+  convert:
+    dependency: "direct main"
+    description:
+      name: convert
+      sha256: "0f08b14755d163f6e2134cb58222dd25ea2a2ee8a195e53983d57c075324d592"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.1"
   cross_file:
     dependency: "direct main"
     description:
@@ -73,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.3+5"
+  crypto:
+    dependency: transitive
+    description:
+      name: crypto
+      sha256: ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.3"
   csslib:
     dependency: transitive
     description:
@@ -81,6 +105,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  csv:
+    dependency: transitive
+    description:
+      name: csv
+      sha256: "63ed2871dd6471193dffc52c0e6c76fb86269c00244d244297abbb355c84a86e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.1"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -93,10 +125,10 @@ packages:
     dependency: transitive
     description:
       name: dart_openai
-      sha256: "23ad2492b5b82d97e1a6952298723772bd0525e6e10ff72924c18bbd64f862a7"
+      sha256: "707f6975454513f4a6197125b5a0fbe92ab7cbe4b8ea9111e529a09d7a3ce0c3"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "4.0.0"
   desktop_drop:
     dependency: "direct main"
     description:
@@ -168,6 +200,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  freezed_annotation:
+    dependency: transitive
+    description:
+      name: freezed_annotation
+      sha256: c3fd9336eb55a38cc1bbd79ab17573113a8deccd0ecbbf926cca3c62803b5c2d
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1"
   html:
     dependency: transitive
     description:
@@ -180,10 +220,10 @@ packages:
     dependency: transitive
     description:
       name: http
-      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
+      sha256: "759d1a329847dd0f39226c688d3e06a6b8679668e350e2891a6474f8b4bb8525"
       url: "https://pub.dev"
     source: hosted
-    version: "0.13.6"
+    version: "1.1.0"
   http_parser:
     dependency: transitive
     description:
@@ -192,14 +232,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
-  intl:
-    dependency: transitive
-    description:
-      name: intl
-      sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.17.0"
   iregexp:
     dependency: transitive
     description:
@@ -216,6 +248,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
+  json_annotation:
+    dependency: transitive
+    description:
+      name: json_annotation
+      sha256: b10a7b2ff83d83c777edba3c6a0f97045ddadd56c944e1a23a3fdf43a1bf4467
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.8.1"
   json_path:
     dependency: transitive
     description:
@@ -228,18 +268,34 @@ packages:
     dependency: "direct main"
     description:
       name: langchain
-      sha256: "185d7771a0a16d6a7c3389fdaf1463e3a020c2de8db547330f908694ad1a1c44"
+      sha256: b76456fd07637d69784c1071c2dcb8f29a0ed0b17522aca989fdd1834e0ec7d8
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2"
+    version: "0.0.14"
+  langchain_chroma:
+    dependency: "direct main"
+    description:
+      name: langchain_chroma
+      sha256: "9aca7c4b7df15870da22fdd66107fddbe52b8d21ff4e98d15563ac87acf69743"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
   langchain_openai:
     dependency: "direct main"
     description:
       name: langchain_openai
-      sha256: a24885e1a2e89c26de5e02deab201dd2c78cf721017f23ccaab0cfc9bd9c99ca
+      sha256: d0abd93e82053e9ee8602309f6aa8b18b6998f207f64360e1663068033600449
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2"
+    version: "0.0.13"
+  langchain_pinecone:
+    dependency: "direct main"
+    description:
+      name: langchain_pinecone
+      sha256: b8c6d52b28e4aa8d6c1712023f3a934ef532c1603d18b2338fa4550b18a4aa20
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   lints:
     dependency: transitive
     description:
@@ -296,14 +352,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-  openai:
-    dependency: "direct main"
-    description:
-      name: openai
-      sha256: "60ca5e83af6718f6bb306ea1f2f5dc968ecce375ebc45a5462554ece43067250"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -320,6 +368,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.1"
+  pinecone:
+    dependency: transitive
+    description:
+      name: pinecone
+      sha256: "83da66603aac092617c73090276626cd463740962cb7dd6848eeb7247fd1aec1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.5"
   provider:
     dependency: transitive
     description:
@@ -349,6 +405,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  sprintf:
+    dependency: transitive
+    description:
+      name: sprintf
+      sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
   stack_trace:
     dependency: transitive
     description:
@@ -405,6 +469,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.2"
+  uuid:
+    dependency: transitive
+    description:
+      name: uuid
+      sha256: b715b8d3858b6fa9f68f87d20d98830283628014750c2b09b6f516c1da4af2a7
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   vector_math:
     dependency: transitive
     description:

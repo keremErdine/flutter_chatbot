@@ -1,24 +1,24 @@
 part of 'app_bloc.dart';
 
 class AppState {
-  AppState({required this.filePaths, required this.messages, this.documents});
-  final List<String> filePaths;
+  AppState(
+      {required this.aiContext,
+      required this.messages,
+      required this.documents});
+  final String aiContext;
   final List<Message> messages;
-  lang_chain.Document? documents;
+  final List<lang_chain.Document> documents;
 
   factory AppState.initial() {
-    return AppState(
-      filePaths: [],
-      messages: [],
-    );
+    return AppState(aiContext: "", messages: [], documents: []);
   }
 
   AppState copyWith(
-      {List<String>? filePaths,
+      {String? aiContext,
       List<Message>? messages,
-      lang_chain.Document? documents}) {
+      List<lang_chain.Document>? documents}) {
     return AppState(
-        filePaths: filePaths ?? this.filePaths,
+        aiContext: aiContext ?? this.aiContext,
         messages: messages ?? this.messages,
         documents: documents ?? this.documents);
   }
@@ -26,6 +26,6 @@ class AppState {
   AppState addMessage(Message message) {
     List<Message> list = [message];
     return AppState(
-        filePaths: filePaths, messages: messages + list, documents: documents);
+        aiContext: aiContext, messages: messages + list, documents: documents);
   }
 }

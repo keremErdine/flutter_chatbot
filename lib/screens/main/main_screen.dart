@@ -72,7 +72,7 @@ class MainScreen extends StatelessWidget {
                           controller.clear();
                           context.read<AppBloc>().add(AppMessageWritten(
                                   message: message_app.Message(
-                                message: message,
+                                context: message,
                                 sender: Sender.user,
                               )));
                         },
