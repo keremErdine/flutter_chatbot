@@ -34,21 +34,19 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         lang_chain.TextLoader(event.document.path);
     final docs = await loader.load();
     final splittedDocs = textSplitter.splitDocuments(docs);
-    print("Splitted ${splittedDocs.length} chunks.");
+
     vectorStore.addDocuments(documents: splittedDocs);
   }
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
     emit(state.addMessage(event.message));
     if (event.message.sender == Sender.user) {
+      final response = await qaChain.call(
+        '${event.message.context} Respond only in Turkish.',
+      );
+
       add(AppMessageWritten(
-          message: Message(
-              context: await qaChain
-                  .call(
-                    event.message.context,
-                  )
-                  .then((value) => value["result"]),
-              sender: Sender.bot)));
+          message: Message(context: response['query'], sender: Sender.bot)));
     }
   }
 }
