@@ -38,21 +38,6 @@ class MessageWidget extends StatelessWidget {
                 textAlign: align,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
-              const SizedBox(
-                height: 3,
-              ),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.source_outlined,
-                  ),
-                  Text(
-                    "asda",
-                    textAlign: align,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              )
             ],
           ),
         ),

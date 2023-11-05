@@ -42,8 +42,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(state.addMessage(event.message));
     if (event.message.sender == Sender.user) {
       final response = await qaChain.call(
-        '${event.message.context} Respond only in Turkish.',
-      );
+          '${event.message.context} Respond only in Turkish. If you can\'t find the answer in the documents, truthfully say that you couldn\'t find it.');
 
       add(AppMessageWritten(
           message: Message(context: response['query'], sender: Sender.bot)));
