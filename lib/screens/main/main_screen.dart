@@ -16,33 +16,31 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       body: BlocBuilder<AppBloc, AppState>(
         builder: (context, state) {
-          return Expanded(
-            child: Column(
-              children: [
-                Messages(
-                  messages: state.messages,
-                  controller: scrollController,
+          return Column(
+            children: [
+              Messages(
+                messages: state.messages,
+                controller: scrollController,
+              ),
+              SizedBox(
+                height: 50,
+                width: 1000,
+                child: TextFormField(
+                  style: Theme.of(context).textTheme.titleMedium,
+                  controller: controller,
+                  onFieldSubmitted: (message) {
+                    scrollController
+                        .jumpTo(scrollController.position.maxScrollExtent);
+                    controller.clear();
+                    context.read<AppBloc>().add(AppMessageWritten(
+                            message: message_app.Message(
+                          context: message,
+                          sender: Sender.user,
+                        )));
+                  },
                 ),
-                SizedBox(
-                  height: 50,
-                  width: 1000,
-                  child: TextFormField(
-                    style: Theme.of(context).textTheme.titleMedium,
-                    controller: controller,
-                    onFieldSubmitted: (message) {
-                      scrollController
-                          .jumpTo(scrollController.position.maxScrollExtent);
-                      controller.clear();
-                      context.read<AppBloc>().add(AppMessageWritten(
-                              message: message_app.Message(
-                            context: message,
-                            sender: Sender.user,
-                          )));
-                    },
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           );
         },
       ),

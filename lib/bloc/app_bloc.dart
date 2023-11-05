@@ -45,7 +45,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           '${event.message.context} Respond only in Turkish. If you can\'t find the answer in the documents, truthfully say that you couldn\'t find it.');
 
       add(AppMessageWritten(
-          message: Message(context: response['query'], sender: Sender.bot)));
+          message: Message(context: response['result'], sender: Sender.bot)));
     }
   }
 }
