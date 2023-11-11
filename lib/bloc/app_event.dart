@@ -11,3 +11,9 @@ class AppMessageWritten extends AppEvent {
   AppMessageWritten({required this.message});
   final Message message;
 }
+
+@immutable
+class AppAIStartedGeneratingResponse extends AppEvent {}
+
+@immutable
+class AppAIFinishedGeneratingResponse extends AppEvent {}

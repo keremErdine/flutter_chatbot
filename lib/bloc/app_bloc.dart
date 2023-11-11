@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_chatbot/api_key.dart';
 import 'package:flutter_chatbot/classes/message.dart';
 import 'package:langchain_openai/langchain_openai.dart';
@@ -27,6 +28,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc() : super(AppState.initial()) {
     on<AppDocumentAdded>(appDocumentAdded);
     on<AppMessageWritten>(appMessageWritten);
+    on<AppAIStartedGeneratingResponse>(appAIStartedGeneratingResponse);
+    on<AppAIFinishedGeneratingResponse>(appAIFinishedGeneratingResponse);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -41,11 +44,22 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
     emit(state.addMessage(event.message));
     if (event.message.sender == Sender.user) {
+      add(AppAIStartedGeneratingResponse());
       final response = await qaChain.call(
           '${event.message.context} Respond only in Turkish. If you can\'t find the answer in the documents, truthfully say that you couldn\'t find it.');
-
+      add(AppAIFinishedGeneratingResponse());
       add(AppMessageWritten(
           message: Message(context: response['result'], sender: Sender.bot)));
     }
+  }
+
+  void appAIStartedGeneratingResponse(
+      AppAIStartedGeneratingResponse event, Emitter emit) {
+    emit(state.copyWith(generatingResponse: true));
+  }
+
+  void appAIFinishedGeneratingResponse(
+      AppAIFinishedGeneratingResponse event, Emitter emit) {
+    emit(state.copyWith(generatingResponse: false));
   }
 }

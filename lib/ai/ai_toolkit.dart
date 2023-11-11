@@ -1,0 +1,1 @@
+enum BookType { history, science }
