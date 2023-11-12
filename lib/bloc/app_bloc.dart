@@ -30,6 +30,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppMessageWritten>(appMessageWritten);
     on<AppAIStartedGeneratingResponse>(appAIStartedGeneratingResponse);
     on<AppAIFinishedGeneratingResponse>(appAIFinishedGeneratingResponse);
+    on<AppScreenChanged>(appScreenChanged);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -61,5 +62,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appAIFinishedGeneratingResponse(
       AppAIFinishedGeneratingResponse event, Emitter emit) {
     emit(state.copyWith(generatingResponse: false));
+  }
+
+  void appScreenChanged(AppScreenChanged event, Emitter emit) {
+    emit(state.copyWith(screen: event.screen));
   }
 }

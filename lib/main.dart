@@ -16,12 +16,12 @@ class ChatbotApp extends StatelessWidget {
       create: (context) => AppBloc(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'jhat bot',
+        title: 'Hocam Bot',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
         ),
-        home: const MainScreen(),
+        home: const Scaffold(body: MainScreen()),
       ),
     );
   }

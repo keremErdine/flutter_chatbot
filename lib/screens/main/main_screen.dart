@@ -14,52 +14,50 @@ class MainScreen extends StatelessWidget {
     TextEditingController controller = TextEditingController();
     ScrollController scrollController = ScrollController();
 
-    return Scaffold(
-      body: BlocBuilder<AppBloc, AppState>(
-        builder: (context, state) {
-          return Column(
-            children: [
-              Messages(
-                messages: state.messages,
-                controller: scrollController,
-              ),
-              if (state.generatingResponse)
-                const Row(
-                  children: [
-                    Center(child: GeneratingResponseIndicator()),
-                  ],
-                ),
-              const Spacer(),
-              Row(
+    return BlocBuilder<AppBloc, AppState>(
+      builder: (context, state) {
+        return Column(
+          children: [
+            Messages(
+              messages: state.messages,
+              controller: scrollController,
+            ),
+            if (state.generatingResponse)
+              const Row(
                 children: [
-                  const Icon(Icons.person),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  SizedBox(
-                    height: 50,
-                    width: 1000,
-                    child: TextFormField(
-                      style: Theme.of(context).textTheme.titleMedium,
-                      controller: controller,
-                      onFieldSubmitted: (message) {
-                        scrollController
-                            .jumpTo(scrollController.position.maxScrollExtent);
-                        controller.clear();
-                        context.read<AppBloc>().add(AppMessageWritten(
-                                message: message_app.Message(
-                              context: message,
-                              sender: Sender.user,
-                            )));
-                      },
-                    ),
-                  ),
+                  Center(child: GeneratingResponseIndicator()),
                 ],
-              )
-            ],
-          );
-        },
-      ),
+              ),
+            const Spacer(),
+            Row(
+              children: [
+                const Icon(Icons.person),
+                const SizedBox(
+                  width: 10,
+                ),
+                SizedBox(
+                  height: 50,
+                  width: 1000,
+                  child: TextFormField(
+                    style: Theme.of(context).textTheme.titleMedium,
+                    controller: controller,
+                    onFieldSubmitted: (message) {
+                      scrollController
+                          .jumpTo(scrollController.position.maxScrollExtent);
+                      controller.clear();
+                      context.read<AppBloc>().add(AppMessageWritten(
+                              message: message_app.Message(
+                            context: message,
+                            sender: Sender.user,
+                          )));
+                    },
+                  ),
+                ),
+              ],
+            )
+          ],
+        );
+      },
     );
   }
 }

@@ -17,3 +17,8 @@ class AppAIStartedGeneratingResponse extends AppEvent {}
 
 @immutable
 class AppAIFinishedGeneratingResponse extends AppEvent {}
+
+class AppScreenChanged extends AppEvent {
+  AppScreenChanged({required this.screen});
+  Screen screen;
+}
