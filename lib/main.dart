@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
 import 'package:flutter_chatbot/screens/main/main_screen.dart';
+import 'package:flutter_chatbot/widgets/drawer.dart';
+import 'package:flutter_chatbot/screens/about/about_screen.dart';
 
 void main() {
   runApp(const ChatbotApp());
@@ -12,6 +14,7 @@ class ChatbotApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget activeScreen = const MainScreen();
     return BlocProvider(
       create: (context) => AppBloc(),
       child: MaterialApp(
@@ -21,7 +24,20 @@ class ChatbotApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
         ),
-        home: const Scaffold(body: MainScreen()),
+        home: Scaffold(
+            drawer: const MainDrawer(),
+            body: BlocConsumer<AppBloc, AppState>(
+              listener: (context, state) {
+                if (state.screen == Screen.mainScreen) {
+                  activeScreen = const MainScreen();
+                } else if (state.screen == Screen.aboutScreen) {
+                  activeScreen = const AboutScreen();
+                }
+              },
+              builder: (context, state) {
+                return activeScreen;
+              },
+            )),
       ),
     );
   }
