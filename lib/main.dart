@@ -24,20 +24,35 @@ class ChatbotApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
         ),
-        home: Scaffold(
-            drawer: const MainDrawer(),
-            body: BlocConsumer<AppBloc, AppState>(
-              listener: (context, state) {
-                if (state.screen == Screen.mainScreen) {
-                  activeScreen = const MainScreen();
-                } else if (state.screen == Screen.aboutScreen) {
-                  activeScreen = const AboutScreen();
-                }
-              },
-              builder: (context, state) {
-                return activeScreen;
-              },
-            )),
+        home: BlocConsumer<AppBloc, AppState>(
+          listener: (context, state) {
+            if (state.screen == Screen.mainScreen) {
+              activeScreen = const MainScreen();
+            } else if (state.screen == Screen.aboutScreen) {
+              activeScreen = const AboutScreen();
+            }
+          },
+          builder: (context, state) {
+            return Scaffold(
+                appBar: AppBar(
+                  title: const Text('Hocam Bot'),
+                  actions: [
+                    if (state.screen == Screen.mainScreen)
+                      IconButton(
+                        onPressed: () {
+                          context.read<AppBloc>().add(AppChatHistoryCleared());
+                        },
+                        icon: const Icon(
+                          Icons.clear_all_outlined,
+                        ),
+                        tooltip: "Konuşmayı temizle.",
+                      )
+                  ],
+                ),
+                drawer: const MainDrawer(),
+                body: activeScreen);
+          },
+        ),
       ),
     );
   }

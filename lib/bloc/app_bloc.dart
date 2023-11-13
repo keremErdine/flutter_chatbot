@@ -31,6 +31,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppAIStartedGeneratingResponse>(appAIStartedGeneratingResponse);
     on<AppAIFinishedGeneratingResponse>(appAIFinishedGeneratingResponse);
     on<AppScreenChanged>(appScreenChanged);
+    on<AppChatHistoryCleared>(appChatHistoryCleared);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -46,8 +47,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(state.addMessage(event.message));
     if (event.message.sender == Sender.user) {
       add(AppAIStartedGeneratingResponse());
+      String conversation = "";
+      for (var message in state.messages) {
+        if (message.sender == Sender.user) {
+          conversation = "$conversation\nStudent:${message.context}";
+        } else {
+          conversation = "$conversation\nYou:${message.context}";
+        }
+      }
       final response = await qaChain.call(
-          '${event.message.context} Respond only in Turkish. If you can\'t find the answer in the documents, truthfully say that you couldn\'t find it.');
+          'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the documents, truthfully say that you couldn\'t find it. The conversation goes like this:  Student: ${event.message.context}\n You: ');
       add(AppAIFinishedGeneratingResponse());
       add(AppMessageWritten(
           message: Message(context: response['result'], sender: Sender.bot)));
@@ -66,5 +75,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appScreenChanged(AppScreenChanged event, Emitter emit) {
     emit(state.copyWith(screen: event.screen));
+  }
+
+  void appChatHistoryCleared(AppChatHistoryCleared event, Emitter emit) {
+    emit(state.copyWith(messages: []));
   }
 }

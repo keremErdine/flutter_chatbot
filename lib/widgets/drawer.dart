@@ -9,7 +9,7 @@ class MainDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(child: BlocBuilder<AppBloc, AppState>(
       builder: (context, state) {
-        return Column(
+        return ListView(
           children: [
             Row(
               children: [

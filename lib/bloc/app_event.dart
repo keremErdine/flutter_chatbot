@@ -22,3 +22,6 @@ class AppScreenChanged extends AppEvent {
   AppScreenChanged({required this.screen});
   Screen screen;
 }
+
+@immutable
+class AppChatHistoryCleared extends AppEvent {}

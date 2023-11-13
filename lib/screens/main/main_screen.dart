@@ -28,7 +28,6 @@ class MainScreen extends StatelessWidget {
                   Center(child: GeneratingResponseIndicator()),
                 ],
               ),
-            const Spacer(),
             Row(
               children: [
                 const Icon(Icons.person),
