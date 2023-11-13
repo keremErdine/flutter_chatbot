@@ -6,6 +6,8 @@ class GeneratingResponseIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Icon(Icons.timelapse_outlined),
         Text(
