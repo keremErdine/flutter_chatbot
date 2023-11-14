@@ -15,11 +15,12 @@ class AppState {
   final Screen screen;
 
   factory AppState.initial() {
-    return AppState(
-        messages: [],
-        documents: [],
-        generatingResponse: false,
-        screen: Screen.mainScreen);
+    return AppState(messages: [
+      Message(
+          context:
+              "Aşağıdaki kutucuğa yazı yazarak soru sor. Hocam Bot(Yapay Zeka) sorunu yanıtlamaya çalışacaktır.",
+          sender: Sender.system),
+    ], documents: [], generatingResponse: false, screen: Screen.mainScreen);
   }
 
   AppState copyWith(
