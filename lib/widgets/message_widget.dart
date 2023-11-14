@@ -18,6 +18,9 @@ class MessageWidget extends StatelessWidget {
     if (message.sender == Sender.bot) {
       color = Colors.blueAccent.shade100;
       align = TextAlign.left;
+    } else if (message.sender == Sender.system) {
+      color = Colors.redAccent.shade700;
+      align = TextAlign.left;
     }
 
     return Row(children: <Widget>[
@@ -26,6 +29,11 @@ class MessageWidget extends StatelessWidget {
         const Icon(
           Icons.smart_toy_outlined,
           color: Colors.blue,
+        ),
+      if (message.sender == Sender.system)
+        const Icon(
+          Icons.error_outline,
+          color: Colors.red,
         ),
       Card(
         color: color,
@@ -47,7 +55,8 @@ class MessageWidget extends StatelessWidget {
           Icons.person,
           color: Colors.lightGreenAccent,
         ),
-      if (message.sender == Sender.bot) const Spacer(),
+      if (message.sender == Sender.bot || message.sender == Sender.system)
+        const Spacer(),
     ]);
   }
 }

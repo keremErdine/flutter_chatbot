@@ -1,4 +1,4 @@
-enum Sender { user, bot }
+enum Sender { user, bot, system }
 
 class Message {
   Message({

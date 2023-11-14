@@ -55,11 +55,18 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           conversation = "$conversation\nYou:${message.context}";
         }
       }
-      final response = await qaChain.call(
-          'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the documents, truthfully say that you couldn\'t find it. The conversation goes like this:  Student: ${event.message.context}\n You: ');
+      try {
+        final response = await qaChain.call(
+            'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the documents, truthfully say that you couldn\'t find it. The conversation goes like this:  Student: ${event.message.context}\n You: ');
+
+        add(AppMessageWritten(
+            message: Message(context: response['result'], sender: Sender.bot)));
+      } catch (e) {
+        add(AppMessageWritten(
+            message:
+                Message(context: "Bir hata oluştu.", sender: Sender.system)));
+      }
       add(AppAIFinishedGeneratingResponse());
-      add(AppMessageWritten(
-          message: Message(context: response['result'], sender: Sender.bot)));
     }
   }
 
