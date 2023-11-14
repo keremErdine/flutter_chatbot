@@ -51,7 +51,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       for (var message in state.messages) {
         if (message.sender == Sender.user) {
           conversation = "$conversation\nStudent:${message.context}";
-        } else {
+        } else if (message.sender == Sender.bot) {
           conversation = "$conversation\nYou:${message.context}";
         }
       }
