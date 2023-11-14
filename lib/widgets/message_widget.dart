@@ -19,7 +19,7 @@ class MessageWidget extends StatelessWidget {
       color = Colors.blueAccent.shade100;
       align = TextAlign.left;
     } else if (message.sender == Sender.system) {
-      color = Colors.redAccent.shade700;
+      color = Colors.redAccent.shade400;
       align = TextAlign.left;
     }
 
@@ -31,9 +31,9 @@ class MessageWidget extends StatelessWidget {
           color: Colors.blue,
         ),
       if (message.sender == Sender.system)
-        const Icon(
-          Icons.error_outline,
-          color: Colors.red,
+        Icon(
+          Icons.settings,
+          color: Colors.redAccent.shade400,
         ),
       Card(
         color: color,
