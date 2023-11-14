@@ -18,7 +18,7 @@ class AppState {
     return AppState(messages: [
       Message(
           context:
-              "Aşağıdaki kutucuğa yazı yazarak soru sor. Hocam Bot(Yapay Zeka) sorunu yanıtlamaya çalışacaktır.",
+              "Aşağıdaki kutucuğa yazı yazarak soru sorunuz. Hocam Bot(Yapay Zeka) sorunu yanıtlamaya çalışacaktır.",
           sender: Sender.system),
     ], documents: [], generatingResponse: false, screen: Screen.mainScreen);
   }
