@@ -37,17 +37,23 @@ class MainDrawer extends StatelessWidget {
                 ],
               )
             else
-              TextButton.icon(
-                onPressed: () {
-                  context
-                      .read<AppBloc>()
-                      .add(AppScreenChanged(screen: Screen.mainScreen));
-                },
-                icon: const Icon(Icons.smart_toy_outlined),
-                label: Text(
-                  "Sohbet",
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+              Row(
+                children: [
+                  TextButton.icon(
+                    onPressed: () {
+                      context
+                          .read<AppBloc>()
+                          .add(AppScreenChanged(screen: Screen.mainScreen));
+                    },
+                    icon: const Icon(Icons.smart_toy_outlined),
+                    label: Text(
+                      "Sohbet",
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  const Spacer(),
+                ],
               ),
             const SizedBox(
               height: 5,
@@ -57,22 +63,31 @@ class MainDrawer extends StatelessWidget {
               Row(
                 children: [
                   const Icon(Icons.menu_book_outlined),
-                  Text("Hakkında",
-                      style: Theme.of(context).textTheme.titleLarge),
+                  Text(
+                    "Hakkında",
+                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.left,
+                  ),
                 ],
               )
             else
-              TextButton.icon(
-                onPressed: () {
-                  context
-                      .read<AppBloc>()
-                      .add(AppScreenChanged(screen: Screen.aboutScreen));
-                },
-                icon: const Icon(Icons.menu_book_outlined),
-                label: Text(
-                  "Hakkında",
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+              Row(
+                children: [
+                  TextButton.icon(
+                    onPressed: () {
+                      context
+                          .read<AppBloc>()
+                          .add(AppScreenChanged(screen: Screen.aboutScreen));
+                    },
+                    icon: const Icon(Icons.menu_book_outlined),
+                    label: Text(
+                      "Hakkında",
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  const Spacer(),
+                ],
               )
           ],
         );
