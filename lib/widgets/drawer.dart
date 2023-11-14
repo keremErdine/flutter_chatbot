@@ -17,6 +17,7 @@ class MainDrawer extends StatelessWidget {
                 Text(
                   "Hocam Bot",
                   style: Theme.of(context).textTheme.headlineMedium,
+                  textAlign: TextAlign.left,
                 )
               ],
             ),
@@ -28,7 +29,11 @@ class MainDrawer extends StatelessWidget {
               Row(
                 children: [
                   const Icon(Icons.smart_toy_outlined),
-                  Text("Sohbet", style: Theme.of(context).textTheme.titleLarge),
+                  Text(
+                    "Sohbet",
+                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.left,
+                  ),
                 ],
               )
             else
