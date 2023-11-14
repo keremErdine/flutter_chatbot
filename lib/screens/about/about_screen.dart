@@ -15,7 +15,7 @@ class AboutScreen extends StatelessWidget {
           height: 5,
         ),
         Text(
-          "Bu uygulama Kerem Erdine tarafından Arkas Bilim ve Sanat Merkezi için proje olmak üzere tasarlanmıştır. Bu proje Dart dilinin Flutter kütüphanesini kullanarak yapılmış bir uygulamadır. Bu uygulama Langchain kütüphanesi kullanılarak yapılan RetrievalQAChain kullanan bir yapay zekanın kitapları bir vektör deposundan okuması ve yorumlamasıyla gerçekleştirilmiştir. Bu uygulamada GPT-3.5-TURBO modeli kullanılmaktadır.",
+          "Bu uygulama Kerem Erdine tarafından Arkas Bilim ve Sanat Merkezi için proje olmak üzere tasarlanmıştır. Bu proje Dart dilinin Flutter kütüphanesini kullanarak yapılmış bir uygulamadır. Langchain kütüphanesi kullanılarak yapılan RetrievalQAChain kullanan bir yapay zekanın kitapları bir vektör deposundan okuması ve yorumlamasıyla yapılmıştır. Bu uygulamada GPT-3.5-TURBO modeli kullanılmaktadır.",
           style: Theme.of(context).textTheme.bodyMedium,
         )
       ],
