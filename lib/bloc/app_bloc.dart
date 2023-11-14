@@ -63,8 +63,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             message: Message(context: response['result'], sender: Sender.bot)));
       } catch (e) {
         add(AppMessageWritten(
-            message:
-                Message(context: "Bir hata oluştu.", sender: Sender.system)));
+            message: Message(
+                context:
+                    "Hocam Bot bir yanıt oluştururken bir hata oluştu. Lütfen tekrar deneyiniz ya da yazılımcı ile iletişime geçiniz.",
+                sender: Sender.system)));
       }
       add(AppAIFinishedGeneratingResponse());
     }
