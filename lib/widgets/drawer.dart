@@ -28,6 +28,9 @@ class MainDrawer extends StatelessWidget {
             if (state.screen == Screen.mainScreen)
               Row(
                 children: [
+                  const SizedBox(
+                    width: 12,
+                  ),
                   const Icon(Icons.smart_toy_outlined),
                   Text(
                     "Sohbet",
@@ -62,6 +65,9 @@ class MainDrawer extends StatelessWidget {
             if (state.screen == Screen.aboutScreen)
               Row(
                 children: [
+                  const SizedBox(
+                    width: 12,
+                  ),
                   const Icon(Icons.menu_book_outlined),
                   Text(
                     "Hakkında",
