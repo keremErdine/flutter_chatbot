@@ -45,6 +45,7 @@ dependencies:
   langchain_chroma: ^0.0.4
   langchain_pinecone: ^0.0.4
   convert: ^3.1.1
+  shared_preferences: ^2.2.2
 
 
 
