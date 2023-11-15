@@ -1,6 +1,6 @@
 part of 'app_bloc.dart';
 
-enum Screen { aboutScreen, mainScreen }
+enum Screen { aboutScreen, chatScreen, welcomeScreen }
 
 class AppState {
   AppState(
@@ -20,7 +20,7 @@ class AppState {
           context:
               "Aşağıdaki kutucuğa yazı yazarak soru sorunuz. Hocam Bot(Yapay Zeka) sorunu yanıtlamaya çalışacaktır.",
           sender: Sender.system),
-    ], documents: [], generatingResponse: false, screen: Screen.mainScreen);
+    ], documents: [], generatingResponse: false, screen: Screen.welcomeScreen);
   }
 
   AppState copyWith(

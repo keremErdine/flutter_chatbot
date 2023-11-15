@@ -25,7 +25,7 @@ class MainDrawer extends StatelessWidget {
               height: 15,
             ),
             //Sohbet Ekranı
-            if (state.screen == Screen.mainScreen)
+            if (state.screen == Screen.chatScreen)
               Row(
                 children: [
                   const SizedBox(
@@ -46,7 +46,7 @@ class MainDrawer extends StatelessWidget {
                     onPressed: () {
                       context
                           .read<AppBloc>()
-                          .add(AppScreenChanged(screen: Screen.mainScreen));
+                          .add(AppScreenChanged(screen: Screen.chatScreen));
                     },
                     icon: const Icon(Icons.smart_toy_outlined),
                     label: Text(

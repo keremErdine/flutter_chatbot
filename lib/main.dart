@@ -26,7 +26,7 @@ class ChatbotApp extends StatelessWidget {
         ),
         home: BlocConsumer<AppBloc, AppState>(
           listener: (context, state) {
-            if (state.screen == Screen.mainScreen) {
+            if (state.screen == Screen.chatScreen) {
               activeScreen = const MainScreen();
             } else if (state.screen == Screen.aboutScreen) {
               activeScreen = const AboutScreen();
@@ -37,7 +37,7 @@ class ChatbotApp extends StatelessWidget {
                 appBar: AppBar(
                   title: const Text('Hocam Bot'),
                   actions: [
-                    if (state.screen == Screen.mainScreen)
+                    if (state.screen == Screen.chatScreen)
                       IconButton(
                         onPressed: () {
                           context.read<AppBloc>().add(AppChatHistoryCleared());
