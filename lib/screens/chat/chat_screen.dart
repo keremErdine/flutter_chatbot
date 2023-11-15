@@ -6,8 +6,8 @@ import 'package:flutter_chatbot/classes/message.dart';
 import 'package:flutter_chatbot/widgets/generating_response_widget.dart';
 import 'package:flutter_chatbot/widgets/message_widget.dart';
 
-class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+class ChatScreen extends StatelessWidget {
+  const ChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
