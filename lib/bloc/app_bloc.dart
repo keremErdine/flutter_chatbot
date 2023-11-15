@@ -6,6 +6,7 @@ import 'package:flutter_chatbot/classes/message.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_pinecone/langchain_pinecone.dart';
 import 'package:langchain/langchain.dart' as lang_chain;
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'app_event.dart';
 part 'app_state.dart';
@@ -25,6 +26,8 @@ const textSplitter = lang_chain.RecursiveCharacterTextSplitter(
 );
 
 class AppBloc extends Bloc<AppEvent, AppState> {
+  // ignore: unused_field
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   AppBloc() : super(AppState.initial()) {
     on<AppDocumentAdded>(appDocumentAdded);
     on<AppMessageWritten>(appMessageWritten);
