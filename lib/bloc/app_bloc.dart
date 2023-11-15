@@ -27,7 +27,7 @@ const textSplitter = lang_chain.RecursiveCharacterTextSplitter(
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   // ignore: unused_field
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+s
   AppBloc() : super(AppState.initial()) {
     on<AppDocumentAdded>(appDocumentAdded);
     on<AppMessageWritten>(appMessageWritten);
@@ -85,7 +85,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(state.copyWith(generatingResponse: false));
   }
 
-  void appScreenChanged(AppScreenChanged event, Emitter emit) {
+  void appScreenChanged(AppScreenChanged event, Emitter emit) async {
+    final SharedPreferences prefs = await state.prefs;
+    if (event.screen == Screen.welcomeScreen) {
+      await prefs.setString("screen", "welcome");
+    } else if (event.screen == Screen.aboutScreen) {
+      await prefs.setString("screen", "about");
+    } else if (event.screen == Screen.chatScreen) {
+      await prefs.setString("screen", "chat");
+    }
     emit(state.copyWith(screen: event.screen));
   }
 
