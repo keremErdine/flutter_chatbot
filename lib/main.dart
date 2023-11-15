@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
-import 'package:flutter_chatbot/screens/main/main_screen.dart';
+import 'package:flutter_chatbot/screens/chat/chat_screen.dart';
 import 'package:flutter_chatbot/widgets/drawer.dart';
 import 'package:flutter_chatbot/screens/about/about_screen.dart';
 
