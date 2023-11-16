@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
 import 'package:flutter_chatbot/screens/chat/chat_screen.dart';
+import 'package:flutter_chatbot/screens/loading/loading_screen.dart';
 import 'package:flutter_chatbot/screens/welcome/welcome_screen.dart';
 import 'package:flutter_chatbot/widgets/drawer.dart';
 import 'package:flutter_chatbot/screens/about/about_screen.dart';
@@ -15,7 +16,7 @@ class ChatbotApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget activeScreen = const ChatScreen();
+    Widget activeScreen = const LoadingScreen();
     return BlocProvider(
       create: (context) => AppBloc(),
       child: MaterialApp(
@@ -33,6 +34,8 @@ class ChatbotApp extends StatelessWidget {
               activeScreen = const AboutScreen();
             } else if (state.screen == Screen.welcomeScreen) {
               activeScreen = const WelcomeScreen();
+            } else {
+              activeScreen = const LoadingScreen();
             }
           },
           builder: (context, state) {

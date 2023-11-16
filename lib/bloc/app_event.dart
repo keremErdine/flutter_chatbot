@@ -25,3 +25,6 @@ class AppScreenChanged extends AppEvent {
 
 @immutable
 class AppChatHistoryCleared extends AppEvent {}
+
+@immutable
+class AppDataFromPrefsRead extends AppEvent {}

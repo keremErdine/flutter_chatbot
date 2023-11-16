@@ -26,8 +26,6 @@ const textSplitter = lang_chain.RecursiveCharacterTextSplitter(
 );
 
 class AppBloc extends Bloc<AppEvent, AppState> {
-  // ignore: unused_field
-s
   AppBloc() : super(AppState.initial()) {
     on<AppDocumentAdded>(appDocumentAdded);
     on<AppMessageWritten>(appMessageWritten);
@@ -35,6 +33,7 @@ s
     on<AppAIFinishedGeneratingResponse>(appAIFinishedGeneratingResponse);
     on<AppScreenChanged>(appScreenChanged);
     on<AppChatHistoryCleared>(appChatHistoryCleared);
+    on<AppDataFromPrefsRead>(appDataFromPrefsRead);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -87,6 +86,8 @@ s
 
   void appScreenChanged(AppScreenChanged event, Emitter emit) async {
     final SharedPreferences prefs = await state.prefs;
+
+    emit(state.copyWith(screen: event.screen));
     if (event.screen == Screen.welcomeScreen) {
       await prefs.setString("screen", "welcome");
     } else if (event.screen == Screen.aboutScreen) {
@@ -94,10 +95,27 @@ s
     } else if (event.screen == Screen.chatScreen) {
       await prefs.setString("screen", "chat");
     }
-    emit(state.copyWith(screen: event.screen));
   }
 
   void appChatHistoryCleared(AppChatHistoryCleared event, Emitter emit) {
     emit(state.copyWith(messages: []));
+  }
+
+  void appDataFromPrefsRead(AppDataFromPrefsRead event, Emitter emit) async {
+    final SharedPreferences prefs = await state.prefs;
+    Screen screen = Screen.loadingScreen;
+    switch (prefs.getString("screen")) {
+      case "chat":
+        screen = Screen.chatScreen;
+        break;
+      case "about":
+        screen = Screen.aboutScreen;
+        break;
+      default:
+        screen = Screen.welcomeScreen;
+        await prefs.setString("screen", "welcome");
+    }
+
+    emit(state.copyWith(screen: screen));
   }
 }
