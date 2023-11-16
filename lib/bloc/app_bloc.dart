@@ -34,6 +34,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppScreenChanged>(appScreenChanged);
     on<AppChatHistoryCleared>(appChatHistoryCleared);
     on<AppDataFromPrefsRead>(appDataFromPrefsRead);
+    on<AppMessageAddedToPrefs>(appMessageAddedToPrefs);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -117,5 +118,25 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
 
     emit(state.copyWith(screen: screen));
+  }
+
+  void appMessageAddedToPrefs(
+      AppMessageAddedToPrefs event, Emitter emit) async {
+    final SharedPreferences prefs = await state.prefs;
+    final List<String> messages = [];
+    final List<String> senders = [];
+    for (var message in state.messages) {
+      messages.add(message.context);
+      switch (message.sender) {
+        case Sender.user:
+          senders.add("user");
+          break;
+        case Sender.bot:
+          senders.add("bot");
+          break;
+        default:
+          senders.add("system");
+      }
+    }
   }
 }
