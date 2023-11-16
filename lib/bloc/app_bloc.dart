@@ -138,5 +138,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           senders.add("system");
       }
     }
+    await prefs.setStringList("messages", messages);
+    await prefs.setStringList("message_senders", senders);
   }
 }
