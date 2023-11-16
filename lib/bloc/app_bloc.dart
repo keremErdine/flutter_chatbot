@@ -105,6 +105,28 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appDataFromPrefsRead(AppDataFromPrefsRead event, Emitter emit) async {
     final SharedPreferences prefs = await state.prefs;
     Screen screen = Screen.loadingScreen;
+    List<String>? messages = prefs.getStringList("messages");
+    List<String>? senders = prefs.getStringList("message_senders");
+    List<Message> decodedMessages = <Message>[];
+
+    if (messages == null) {
+      await prefs.setStringList("messages", [
+        "Aşağıdaki kutucuğa yazı yazarak soru sorunuz. Hocam Bot(Yapay Zeka) sorunu yanıtlamaya çalışacaktır."
+      ]);
+      await prefs.setStringList("message_senders", ["system"]);
+    } else {
+      int index = 0;
+      for (var message in messages) {
+        Sender decodedSender = Sender.system;
+        if (senders![index] == "bot") {
+          decodedSender = Sender.bot;
+        } else if (senders[index] == "user") {
+          decodedSender = Sender.user;
+        }
+        decodedMessages.add(Message(context: message, sender: decodedSender));
+      }
+    }
+
     switch (prefs.getString("screen")) {
       case "chat":
         screen = Screen.chatScreen;
@@ -117,7 +139,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         await prefs.setString("screen", "welcome");
     }
 
-    emit(state.copyWith(screen: screen));
+    emit(state.copyWith(screen: screen, messages: decodedMessages));
   }
 
   void appMessageAddedToPrefs(
