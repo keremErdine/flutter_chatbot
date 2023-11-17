@@ -9,7 +9,8 @@ class AppState {
       required this.generatingResponse,
       required this.screen,
       required this.prefs,
-      required this.userAPIKey});
+      required this.userAPIKey,
+      required this.llm});
 
   final List<Message> messages;
   final List<lang_chain.Document> documents;
@@ -17,6 +18,7 @@ class AppState {
   final Screen screen;
   final Future<SharedPreferences> prefs;
   final String userAPIKey;
+  final OpenAI? llm;
 
   factory AppState.initial() {
     return AppState(
@@ -30,7 +32,8 @@ class AppState {
         generatingResponse: false,
         screen: Screen.loadingScreen,
         prefs: SharedPreferences.getInstance(),
-        userAPIKey: "");
+        userAPIKey: "",
+        llm: null);
   }
 
   AppState copyWith(
@@ -39,8 +42,10 @@ class AppState {
       bool? generatingResponse,
       Screen? screen,
       bool? appStartup,
-      String? userAPIKey}) {
+      String? userAPIKey,
+      OpenAI? llm}) {
     return AppState(
+        llm: llm ?? this.llm,
         messages: messages ?? this.messages,
         documents: documents ?? this.documents,
         generatingResponse: generatingResponse ?? this.generatingResponse,
@@ -52,6 +57,7 @@ class AppState {
   AppState addMessage(Message message) {
     List<Message> list = [message];
     return AppState(
+        llm: llm,
         messages: messages + list,
         documents: documents,
         generatingResponse: generatingResponse,
