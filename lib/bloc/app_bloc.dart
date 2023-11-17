@@ -76,7 +76,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         add(AppMessageWritten(
             message: Message(
                 context:
-                    "Hocam Bot bir yanıt oluştururken bir hata oluştu. Lütfen tekrar deneyiniz ya da yazılımcı ile iletişime geçiniz.",
+                    "Hocam Bot bir yanıt oluştururken bir hata oluştu. Bu, girmiş olduğunuz OpenAI API anahtarının yanlış olmasından kaynaklanıyor olabilir. Lütfen doğru bir OpenAI API anahtarı girdiğinizden ve OpenAI kredinizin bitmediğinden emin olun.",
+                sender: Sender.system)));
+        add(AppMessageWritten(
+            message: Message(
+                context:
+                    "Eğer hala böyle bir problem yaşıyorsanız lütfen geliştiriciyle iletişime geçiniz",
                 sender: Sender.system)));
       }
       add(AppAIFinishedGeneratingResponse());
