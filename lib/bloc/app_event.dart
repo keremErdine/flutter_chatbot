@@ -29,4 +29,5 @@ class AppChatHistoryCleared extends AppEvent {}
 @immutable
 class AppDataFromPrefsRead extends AppEvent {}
 
+@immutable
 class AppMessageAddedToPrefs extends AppEvent {}
