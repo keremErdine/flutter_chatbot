@@ -10,7 +10,10 @@ class AppState {
       required this.screen,
       required this.prefs,
       required this.userAPIKey,
-      required this.llm});
+      required this.llm,
+      required this.embeddings,
+      required this.vectorStore,
+      required this.chain});
 
   final List<Message> messages;
   final List<lang_chain.Document> documents;
@@ -19,6 +22,9 @@ class AppState {
   final Future<SharedPreferences> prefs;
   final String userAPIKey;
   final OpenAI? llm;
+  final OpenAIEmbeddings? embeddings;
+  final Pinecone? vectorStore;
+  final lang_chain.RetrievalQAChain? chain;
 
   factory AppState.initial() {
     return AppState(
@@ -33,7 +39,10 @@ class AppState {
         screen: Screen.loadingScreen,
         prefs: SharedPreferences.getInstance(),
         userAPIKey: "",
-        llm: null);
+        llm: null,
+        embeddings: null,
+        vectorStore: null,
+        chain: null);
   }
 
   AppState copyWith(
@@ -43,7 +52,10 @@ class AppState {
       Screen? screen,
       bool? appStartup,
       String? userAPIKey,
-      OpenAI? llm}) {
+      OpenAI? llm,
+      OpenAIEmbeddings? embeddings,
+      Pinecone? vectorStore,
+      lang_chain.RetrievalQAChain? chain}) {
     return AppState(
         llm: llm ?? this.llm,
         messages: messages ?? this.messages,
@@ -51,7 +63,10 @@ class AppState {
         generatingResponse: generatingResponse ?? this.generatingResponse,
         screen: screen ?? this.screen,
         prefs: prefs,
-        userAPIKey: userAPIKey ?? this.userAPIKey);
+        userAPIKey: userAPIKey ?? this.userAPIKey,
+        embeddings: embeddings ?? this.embeddings,
+        vectorStore: vectorStore ?? this.vectorStore,
+        chain: chain ?? this.chain);
   }
 
   AppState addMessage(Message message) {
@@ -63,6 +78,9 @@ class AppState {
         generatingResponse: generatingResponse,
         screen: screen,
         prefs: prefs,
-        userAPIKey: userAPIKey);
+        userAPIKey: userAPIKey,
+        embeddings: embeddings,
+        vectorStore: vectorStore,
+        chain: chain);
   }
 }
