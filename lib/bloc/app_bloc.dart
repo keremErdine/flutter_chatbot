@@ -50,7 +50,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
     emit(state.addMessage(event.message));
     add(AppMessageAddedToPrefs());
-    if (event.message.sender == Sender.user) {
+    if (state.userAPIKey == "" || event.message.sender != Sender.system) {
+      add(AppMessageWritten(
+          message: Message(
+              context:
+                  "Daha bir API anahtarı girmediğinden dolayı Hocam Bot'u kullanamazsın! Yukarıdaki \"API Anahtarı Gir\" tuşuna basarak bir OpenAI API anahtarı girebilirsin.",
+              sender: Sender.system)));
+    } else if (event.message.sender == Sender.user) {
       add(AppAIStartedGeneratingResponse());
       String conversation = "";
       for (var message in state.messages) {
