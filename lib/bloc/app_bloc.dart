@@ -11,15 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'app_event.dart';
 part 'app_state.dart';
 
-final OpenAI llm = OpenAI(apiKey: openAIapiKey);
-final embeddings = OpenAIEmbeddings(apiKey: openAIapiKey);
-final vectorStore = Pinecone(
-    apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
-final lang_chain.RetrievalQAChain qaChain = lang_chain.RetrievalQAChain.fromLlm(
-  llm: llm,
-  retriever: vectorStore.asRetriever(),
-);
-
 const textSplitter = lang_chain.RecursiveCharacterTextSplitter(
   chunkSize: 1000,
   chunkOverlap: 200,
@@ -35,6 +26,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppChatHistoryCleared>(appChatHistoryCleared);
     on<AppDataFromPrefsRead>(appDataFromPrefsRead);
     on<AppMessageAddedToPrefs>(appMessageAddedToPrefs);
+    on<AppUserAPIKeyEntered>(appUserAPIKeyEntered);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -43,7 +35,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     final docs = await loader.load();
     final splittedDocs = textSplitter.splitDocuments(docs);
 
-    vectorStore.addDocuments(documents: splittedDocs);
+    state.vectorStore!.addDocuments(documents: splittedDocs);
   }
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
@@ -60,7 +52,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         }
       }
       try {
-        final response = await qaChain.call(
+        final response = await state.chain!.call(
             'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the documents, truthfully say that you couldn\'t find it. The conversation goes like this:  Student: ${event.message.context}\n You: ');
 
         add(AppMessageWritten(
@@ -69,7 +61,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         add(AppMessageWritten(
             message: Message(
                 context:
-                    "Hocam Bot bir yanıt oluştururken bir hata oluştu. Lütfen tekrar deneyiniz ya da yazılımcı ile iletişime geçiniz.",
+                    "Hocam Bot bir yanıt oluştururken bir hata oluştu. Bu, girmiş olduğunuz OpenAI API anahtarının yanlış olmasından kaynaklanıyor olabilir. Lütfen doğru bir OpenAI API anahtarı girdiğinizden ve OpenAI kredinizin bitmediğinden emin olun.",
+                sender: Sender.system)));
+        add(AppMessageWritten(
+            message: Message(
+                context:
+                    "Eğer hala böyle bir problem yaşıyorsanız lütfen geliştiriciyle iletişime geçiniz",
                 sender: Sender.system)));
       }
       add(AppAIFinishedGeneratingResponse());
@@ -139,7 +136,26 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         await prefs.setString("screen", "welcome");
     }
 
-    emit(state.copyWith(screen: screen, messages: decodedMessages));
+    String? apiKey = prefs.getString("user_API_key");
+    if (apiKey != null) {
+      final OpenAI llm = OpenAI(apiKey: apiKey);
+      final OpenAIEmbeddings embeddings = OpenAIEmbeddings(apiKey: apiKey);
+      final Pinecone vectorStore = Pinecone(
+          apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
+      final lang_chain.RetrievalQAChain chain =
+          lang_chain.RetrievalQAChain.fromLlm(
+              llm: llm, retriever: vectorStore.asRetriever());
+      emit(state.copyWith(
+          llm: llm,
+          embeddings: embeddings,
+          vectorStore: vectorStore,
+          chain: chain));
+    }
+
+    emit(state.copyWith(
+      screen: screen,
+      messages: decodedMessages,
+    ));
   }
 
   void appMessageAddedToPrefs(
@@ -162,5 +178,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
     await prefs.setStringList("messages", messages);
     await prefs.setStringList("message_senders", senders);
+  }
+
+  void appUserAPIKeyEntered(AppUserAPIKeyEntered event, Emitter emit) async {
+    emit(state.copyWith(
+        userAPIKey: event.apiKey, llm: OpenAI(apiKey: event.apiKey)));
+    final SharedPreferences prefs = await state.prefs;
+    await prefs.setString("user_API_key", event.apiKey);
   }
 }
