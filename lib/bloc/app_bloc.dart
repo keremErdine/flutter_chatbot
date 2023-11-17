@@ -165,7 +165,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     await prefs.setStringList("message_senders", senders);
   }
 
-  void appUserAPIKeyEntered(AppUserAPIKeyEntered event, Emitter emit) {
+  void appUserAPIKeyEntered(AppUserAPIKeyEntered event, Emitter emit) async {
     emit(state.copyWith(userAPIKey: event.apiKey));
+    final SharedPreferences prefs = await state.prefs;
+    await prefs.setString("user_API_key", event.apiKey);
   }
 }
