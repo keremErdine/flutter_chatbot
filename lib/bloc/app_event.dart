@@ -20,7 +20,7 @@ class AppAIFinishedGeneratingResponse extends AppEvent {}
 
 class AppScreenChanged extends AppEvent {
   AppScreenChanged({required this.screen});
-  Screen screen;
+  final Screen screen;
 }
 
 @immutable
@@ -29,4 +29,10 @@ class AppChatHistoryCleared extends AppEvent {}
 @immutable
 class AppDataFromPrefsRead extends AppEvent {}
 
+@immutable
 class AppMessageAddedToPrefs extends AppEvent {}
+
+class AppUserAPIKeyEntered extends AppEvent {
+  AppUserAPIKeyEntered({required this.apiKey});
+  final String apiKey;
+}

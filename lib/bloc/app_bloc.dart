@@ -35,6 +35,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppChatHistoryCleared>(appChatHistoryCleared);
     on<AppDataFromPrefsRead>(appDataFromPrefsRead);
     on<AppMessageAddedToPrefs>(appMessageAddedToPrefs);
+    on<AppUserAPIKeyEntered>(appUserAPIKeyEntered);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -48,6 +49,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
     emit(state.addMessage(event.message));
+    add(AppMessageAddedToPrefs());
     if (event.message.sender == Sender.user) {
       add(AppAIStartedGeneratingResponse());
       String conversation = "";
@@ -115,12 +117,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       ]);
       await prefs.setStringList("message_senders", ["system"]);
     } else {
-      int index = 0;
       for (var message in messages) {
         Sender decodedSender = Sender.system;
-        if (senders![index] == "bot") {
+        if (senders![messages.indexOf(message)] == "bot") {
           decodedSender = Sender.bot;
-        } else if (senders[index] == "user") {
+        } else if (senders[messages.indexOf(message)] == "user") {
           decodedSender = Sender.user;
         }
         decodedMessages.add(Message(context: message, sender: decodedSender));
@@ -162,5 +163,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
     await prefs.setStringList("messages", messages);
     await prefs.setStringList("message_senders", senders);
+  }
+
+  void appUserAPIKeyEntered(AppUserAPIKeyEntered event, Emitter emit) {
+    emit(state.copyWith(userAPIKey: event.apiKey));
   }
 }
