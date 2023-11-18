@@ -49,7 +49,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
     emit(state.addMessage(event.message));
     add(AppMessageAddedToPrefs());
-    if (event.message.sender == Sender.user) {
+    if (state.apiKey.isEmpty) {
+      add(AppMessageWritten(
+          message: Message(
+              context:
+                  "Bir OpenAI api anahtarı girmediğinizden dolayı uygulamayı kullanamazsınız. Lütfen bir OpenAI api anahtarı girip tekrar deneyiniz.",
+              sender: Sender.system)));
+    } else if (event.message.sender == Sender.user) {
       add(AppAIStartedGeneratingResponse());
       String conversation = "";
       for (var message in state.messages) {
@@ -69,7 +75,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         add(AppMessageWritten(
             message: Message(
                 context:
-                    "Hocam Bot bir yanıt oluştururken bir hata oluştu. Lütfen tekrar deneyiniz ya da yazılımcı ile iletişime geçiniz.",
+                    "Hocam Bot bir yanıt oluştururken bir hata oluştu. Bu doğru bir OpenAI api anahtarı girmediğinizden kaynaklanıyor olabilir.",
                 sender: Sender.system)));
       }
       add(AppAIFinishedGeneratingResponse());
