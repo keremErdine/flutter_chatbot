@@ -49,7 +49,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
     emit(state.addMessage(event.message));
     add(AppMessageAddedToPrefs());
-    if (state.apiKey.isEmpty) {
+    if (state.apiKey.isEmpty && event.message.sender != Sender.system) {
       add(AppMessageWritten(
           message: Message(
               context:
