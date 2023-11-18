@@ -8,29 +8,44 @@ class EnterApiKeyPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController controller = TextEditingController();
-    return Scaffold(
-      body: Column(
-        children: [
-          Text(
-            "Bu uygulamayı kullanmak için bir OpenAI api anahtarı giriniz.",
-            style: Theme.of(context).textTheme.displayMedium,
+    return AlertDialog(
+      content: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.3,
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Scaffold(
+          body: Column(
+            children: [
+              Expanded(
+                child: Text(
+                  "Bu uygulamayı kullanmak için bir OpenAI api anahtarı giriniz.",
+                  style: Theme.of(context).textTheme.displaySmall,
+                ),
+              ),
+              const SizedBox(
+                height: 7,
+              ),
+              Container(
+                decoration: BoxDecoration(border: Border.all()),
+                height: 25,
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: TextFormField(
+                  textAlign: TextAlign.center,
+                  controller: controller,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  onFieldSubmitted: (apiKey) {
+                    context
+                        .read<AppBloc>()
+                        .add(AppApiKeyEntered(apiKey: apiKey));
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 4,
+              )
+            ],
           ),
-          const SizedBox(
-            height: 7,
-          ),
-          Container(
-              decoration: BoxDecoration(border: Border.all()),
-              height: 10,
-              width: 60,
-              child: TextFormField(
-                controller: controller,
-                autocorrect: false,
-                enableSuggestions: false,
-                onFieldSubmitted: (apiKey) {
-                  context.read<AppBloc>().add(AppApiKeyEntered(apiKey: apiKey));
-                },
-              ))
-        ],
+        ),
       ),
     );
   }

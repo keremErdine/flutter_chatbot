@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'app_event.dart';
 part 'app_state.dart';
 
-OpenAI llm = OpenAI(apiKey: openAIapiKey, model: "gpt-3.5");
+ChatOpenAI llm = ChatOpenAI(apiKey: openAIapiKey, model: "gpt-3.5-turbo-1106");
 OpenAIEmbeddings embeddings = OpenAIEmbeddings(apiKey: openAIapiKey);
 final Pinecone vectorStore = Pinecone(
     apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
@@ -35,6 +35,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppChatHistoryCleared>(appChatHistoryCleared);
     on<AppDataFromPrefsRead>(appDataFromPrefsRead);
     on<AppMessageAddedToPrefs>(appMessageAddedToPrefs);
+    on<AppApiKeyEntered>(appApiKeyEntered);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -77,6 +78,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                 context:
                     "Hocam Bot bir yanıt oluştururken bir hata oluştu. Bu doğru bir OpenAI api anahtarı girmediğinizden kaynaklanıyor olabilir.",
                 sender: Sender.system)));
+        print(e);
       }
       add(AppAIFinishedGeneratingResponse());
     }
@@ -171,7 +173,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void appApiKeyEntered(AppApiKeyEntered event, Emitter emit) {
-    llm = OpenAI(apiKey: event.apiKey, model: "gpt-3.5");
+    llm = ChatOpenAI(apiKey: event.apiKey, model: "gpt-3.5-turbo-1106");
     embeddings = OpenAIEmbeddings(apiKey: event.apiKey);
     emit(state.copyWith(apiKey: event.apiKey));
   }
