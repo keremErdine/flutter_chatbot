@@ -11,9 +11,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'app_event.dart';
 part 'app_state.dart';
 
-final OpenAI llm = OpenAI(apiKey: openAIapiKey);
-final embeddings = OpenAIEmbeddings(apiKey: openAIapiKey);
-final vectorStore = Pinecone(
+OpenAI llm = OpenAI(apiKey: openAIapiKey, model: "gpt-3.5");
+OpenAIEmbeddings embeddings = OpenAIEmbeddings(apiKey: openAIapiKey);
+final Pinecone vectorStore = Pinecone(
     apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
 final lang_chain.RetrievalQAChain qaChain = lang_chain.RetrievalQAChain.fromLlm(
   llm: llm,
@@ -162,5 +162,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
     await prefs.setStringList("messages", messages);
     await prefs.setStringList("message_senders", senders);
+  }
+
+  void appApiKeyEntered(AppApiKeyEntered event, Emitter emit) {
+    llm = OpenAI(apiKey: event.apiKey, model: "gpt-3.5");
+    embeddings = OpenAIEmbeddings(apiKey: event.apiKey);
+    emit(state.copyWith(apiKey: event.apiKey));
   }
 }

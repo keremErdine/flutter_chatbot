@@ -31,3 +31,8 @@ class AppDataFromPrefsRead extends AppEvent {}
 
 @immutable
 class AppMessageAddedToPrefs extends AppEvent {}
+
+class AppApiKeyEntered extends AppEvent {
+  AppApiKeyEntered({required this.apiKey});
+  final String apiKey;
+}
