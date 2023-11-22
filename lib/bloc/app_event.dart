@@ -36,3 +36,8 @@ class AppApiKeyEntered extends AppEvent {
   AppApiKeyEntered({required this.apiKey});
   final String apiKey;
 }
+
+class AppAITemperatureSelected extends AppEvent {
+  AppAITemperatureSelected({required this.temperature});
+  final Temperature temperature;
+}

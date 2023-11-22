@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
 import 'package:flutter_chatbot/screens/chat/chat_screen.dart';
-import 'package:flutter_chatbot/screens/chat/enter_api_key_popup.dart';
+import 'package:flutter_chatbot/screens/chat/config_ai_popup.dart';
 import 'package:flutter_chatbot/screens/loading/loading_screen.dart';
 import 'package:flutter_chatbot/screens/welcome/welcome_screen.dart';
 import 'package:flutter_chatbot/widgets/drawer.dart';
@@ -49,11 +49,11 @@ class ChatbotApp extends StatelessWidget {
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (context) => const EnterApiKeyPopup(),
+                            builder: (context) => const ConfigAIPopup(),
                           );
                         },
                         icon: const Icon(Icons.smart_toy_outlined),
-                        tooltip: "OpenAI api anahtarını gir.",
+                        tooltip: "Hocam Bot ayarları.",
                       ),
                     if (state.screen == Screen.chatScreen)
                       IconButton(

@@ -11,7 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'app_event.dart';
 part 'app_state.dart';
 
-ChatOpenAI llm = ChatOpenAI(apiKey: openAIapiKey, model: "gpt-3.5-turbo-1106");
+ChatOpenAI llm = ChatOpenAI(
+    apiKey: openAIapiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
 OpenAIEmbeddings embeddings = OpenAIEmbeddings(apiKey: openAIapiKey);
 final Pinecone vectorStore = Pinecone(
     apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
@@ -36,6 +37,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppDataFromPrefsRead>(appDataFromPrefsRead);
     on<AppMessageAddedToPrefs>(appMessageAddedToPrefs);
     on<AppApiKeyEntered>(appApiKeyEntered);
+    on<AppAITemperatureSelected>(appAITemperatureSelected);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -78,7 +80,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                 context:
                     "Hocam Bot bir yanıt oluştururken bir hata oluştu. Bu doğru bir OpenAI api anahtarı girmediğinizden kaynaklanıyor olabilir.",
                 sender: Sender.system)));
-        print(e);
       }
       add(AppAIFinishedGeneratingResponse());
     }
@@ -107,8 +108,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
   }
 
-  void appChatHistoryCleared(AppChatHistoryCleared event, Emitter emit) {
+  void appChatHistoryCleared(AppChatHistoryCleared event, Emitter emit) async {
     emit(state.copyWith(messages: []));
+    final SharedPreferences prefs = await state.prefs;
+    await prefs.setStringList("messages", <String>[]);
+    await prefs.setStringList("message_senders", <String>[]);
   }
 
   void appDataFromPrefsRead(AppDataFromPrefsRead event, Emitter emit) async {
@@ -146,8 +150,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         screen = Screen.welcomeScreen;
         await prefs.setString("screen", "welcome");
     }
+    String apiKey = prefs.getString("user_api_key") ?? "";
+    if (apiKey.isNotEmpty) {
+      llm = ChatOpenAI(
+          apiKey: apiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
+      embeddings = OpenAIEmbeddings(apiKey: apiKey);
+    }
 
-    emit(state.copyWith(screen: screen, messages: decodedMessages));
+    emit(state.copyWith(
+        screen: screen, messages: decodedMessages, apiKey: apiKey));
   }
 
   void appMessageAddedToPrefs(
@@ -172,9 +183,38 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     await prefs.setStringList("message_senders", senders);
   }
 
-  void appApiKeyEntered(AppApiKeyEntered event, Emitter emit) {
+  void appApiKeyEntered(AppApiKeyEntered event, Emitter emit) async {
     llm = ChatOpenAI(apiKey: event.apiKey, model: "gpt-3.5-turbo-1106");
     embeddings = OpenAIEmbeddings(apiKey: event.apiKey);
     emit(state.copyWith(apiKey: event.apiKey));
+    SharedPreferences prefs = await state.prefs;
+    await prefs.setString("user_api_key", event.apiKey);
+  }
+
+  void appAITemperatureSelected(AppAITemperatureSelected event, Emitter emit) {
+    double temperature = 0.25;
+    if (event.temperature == Temperature.direct) {
+      temperature = 0;
+    } else if (event.temperature == Temperature.normal) {
+      temperature = 0.25;
+    } else if (event.temperature == Temperature.high) {
+      temperature = 0.5;
+    } else if (event.temperature == Temperature.extreme) {
+      temperature = 0.75;
+    } else if (event.temperature == Temperature.overkill) {
+      temperature = 1;
+    } else {
+      add(AppMessageWritten(
+          message: Message(
+              context:
+                  "Hocam Bot karmaşıklığı seçilirken bir hata oluştuğundan normal seviyesine ayarlandı.",
+              sender: Sender.system)));
+    }
+
+    llm = ChatOpenAI(
+        apiKey: state.apiKey,
+        model: "gpt-3.5-turbo-1106",
+        temperature: temperature);
+    emit(state.copyWith(temperature: event.temperature));
   }
 }
