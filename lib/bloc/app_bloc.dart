@@ -150,6 +150,35 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         screen = Screen.welcomeScreen;
         await prefs.setString("screen", "welcome");
     }
+
+    int temperatureValue = prefs.getInt("ai_temperature") ?? 0;
+    Temperature temperatureEnum = Temperature.normal;
+    double aiTemperature = 0.25;
+    switch (temperatureValue) {
+      case 1:
+        aiTemperature = 0;
+        temperatureEnum = Temperature.direct;
+        break;
+      case 2:
+        aiTemperature = 0.25;
+        temperatureEnum = Temperature.normal;
+        break;
+      case 3:
+        aiTemperature = 0.5;
+        temperatureEnum = Temperature.high;
+        break;
+      case 4:
+        aiTemperature = 0.75;
+        temperatureEnum = Temperature.extreme;
+        break;
+      case 5:
+        aiTemperature = 1;
+        temperatureEnum = Temperature.overkill;
+        break;
+      default:
+        await prefs.setInt("ai_temperature", 2);
+    }
+
     String apiKey = prefs.getString("user_api_key") ?? "";
     if (apiKey.isNotEmpty) {
       llm = ChatOpenAI(
@@ -191,7 +220,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     await prefs.setString("user_api_key", event.apiKey);
   }
 
-  void appAITemperatureSelected(AppAITemperatureSelected event, Emitter emit) {
+  void appAITemperatureSelected(
+      AppAITemperatureSelected event, Emitter emit) async {
     double temperature = 0.25;
     if (event.temperature == Temperature.direct) {
       temperature = 0;
@@ -216,5 +246,20 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         model: "gpt-3.5-turbo-1106",
         temperature: temperature);
     emit(state.copyWith(temperature: event.temperature));
+    final SharedPreferences prefs = await state.prefs;
+    int temperatureValue = 2;
+    if (event.temperature == Temperature.direct) {
+      temperatureValue = 1;
+    } else if (event.temperature == Temperature.normal) {
+      temperatureValue = 2;
+    } else if (event.temperature == Temperature.high) {
+      temperatureValue = 3;
+    } else if (event.temperature == Temperature.extreme) {
+      temperatureValue = 4;
+    } else if (event.temperature == Temperature.overkill) {
+      temperatureValue = 5;
+    }
+
+    await prefs.setInt("ai_temperature", temperatureValue);
   }
 }
