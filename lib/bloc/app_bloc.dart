@@ -182,12 +182,17 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     String apiKey = prefs.getString("user_api_key") ?? "";
     if (apiKey.isNotEmpty) {
       llm = ChatOpenAI(
-          apiKey: apiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
+          apiKey: apiKey,
+          model: "gpt-3.5-turbo-1106",
+          temperature: aiTemperature);
       embeddings = OpenAIEmbeddings(apiKey: apiKey);
     }
 
     emit(state.copyWith(
-        screen: screen, messages: decodedMessages, apiKey: apiKey));
+        screen: screen,
+        messages: decodedMessages,
+        apiKey: apiKey,
+        temperature: temperatureEnum));
   }
 
   void appMessageAddedToPrefs(
