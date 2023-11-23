@@ -4,6 +4,8 @@ enum Screen { aboutScreen, chatScreen, welcomeScreen, loadingScreen }
 
 enum Temperature { direct, normal, high, extreme, overkill }
 
+enum AccountMenu { login, signup }
+
 class AppState {
   AppState(
       {required this.messages,
@@ -12,7 +14,8 @@ class AppState {
       required this.screen,
       required this.prefs,
       required this.apiKey,
-      required this.temperature});
+      required this.temperature,
+      required this.currentAcountMenu});
 
   final List<Message> messages;
   final List<lang_chain.Document> documents;
@@ -21,6 +24,7 @@ class AppState {
   final String apiKey;
   final Temperature temperature;
   final Future<SharedPreferences> prefs;
+  final AccountMenu currentAcountMenu;
 
   factory AppState.initial() {
     return AppState(
@@ -35,7 +39,8 @@ class AppState {
         screen: Screen.loadingScreen,
         prefs: SharedPreferences.getInstance(),
         apiKey: "",
-        temperature: Temperature.normal);
+        temperature: Temperature.normal,
+        currentAcountMenu: AccountMenu.login);
   }
 
   AppState copyWith(
@@ -45,7 +50,8 @@ class AppState {
       Screen? screen,
       bool? appStartup,
       String? apiKey,
-      Temperature? temperature}) {
+      Temperature? temperature,
+      AccountMenu? currentAcountMenu}) {
     return AppState(
         messages: messages ?? this.messages,
         documents: documents ?? this.documents,
@@ -53,7 +59,8 @@ class AppState {
         screen: screen ?? this.screen,
         prefs: prefs,
         apiKey: apiKey ?? this.apiKey,
-        temperature: temperature ?? this.temperature);
+        temperature: temperature ?? this.temperature,
+        currentAcountMenu: currentAcountMenu ?? this.currentAcountMenu);
   }
 
   AppState addMessage(Message message) {
@@ -65,6 +72,7 @@ class AppState {
         screen: screen,
         prefs: prefs,
         apiKey: apiKey,
-        temperature: temperature);
+        temperature: temperature,
+        currentAcountMenu: currentAcountMenu);
   }
 }
