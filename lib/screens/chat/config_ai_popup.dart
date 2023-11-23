@@ -34,6 +34,7 @@ class ConfigAIPopup extends StatelessWidget {
                   height: 30,
                   width: MediaQuery.of(context).size.width * 0.45,
                   child: TextField(
+                    obscureText: true,
                     decoration: const InputDecoration(
                         hintText: "OpenAI API anahtarınızı giriniz."),
                     textAlign: TextAlign.center,

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "125066649245",
+    "project_id": "hocam-bot",
+    "storage_bucket": "hocam-bot.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:125066649245:android:adaa010df1e70d0af77e74",
+        "android_client_info": {
+          "package_name": "com.example.flutter_chatbot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9x1ghuYrV5VQ7EtQGFM_EyHBFZAKvjPQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

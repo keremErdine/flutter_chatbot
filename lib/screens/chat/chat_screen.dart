@@ -24,33 +24,48 @@ class ChatScreen extends StatelessWidget {
             ),
             if (state.generatingResponse)
               const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Center(child: GeneratingResponseIndicator()),
                 ],
               ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.person),
                 const SizedBox(
                   width: 10,
                 ),
-                SizedBox(
-                  height: 50,
-                  width: 1000,
-                  child: TextFormField(
-                    style: Theme.of(context).textTheme.titleMedium,
-                    controller: controller,
-                    onFieldSubmitted: (message) {
-                      scrollController
-                          .jumpTo(scrollController.position.maxScrollExtent);
-                      controller.clear();
-                      context.read<AppBloc>().add(AppMessageWritten(
-                              message: message_app.Message(
-                            context: message,
-                            sender: Sender.user,
-                          )));
-                    },
+                Center(
+                  child: Container(
+                    width: 1000,
+                    height: 22,
+                    decoration: BoxDecoration(border: Border.all()),
+                    child: TextField(
+                      decoration: const InputDecoration(
+                          hintText: "Hocam Bot'a soracağınız soruyu girin."),
+                      maxLines: 1,
+                      autofocus: true,
+                      textAlign: TextAlign.center,
+                      textAlignVertical: TextAlignVertical.center,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      controller: controller,
+                      onSubmitted: (message) {
+                        scrollController
+                            .jumpTo(scrollController.position.maxScrollExtent);
+                        controller.clear();
+                        context.read<AppBloc>().add(AppMessageWritten(
+                                message: message_app.Message(
+                              context: message,
+                              sender: Sender.user,
+                            )));
+                      },
+                    ),
                   ),
+                ),
+                const SizedBox(
+                  height: 15,
                 ),
               ],
             )
