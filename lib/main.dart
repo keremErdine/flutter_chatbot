@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
@@ -8,7 +9,16 @@ import 'package:flutter_chatbot/screens/welcome/welcome_screen.dart';
 import 'package:flutter_chatbot/widgets/drawer.dart';
 import 'package:flutter_chatbot/screens/about/about_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+          apiKey: "AIzaSyB9x1ghuYrV5VQ7EtQGFM_EyHBFZAKvjPQ",
+          appId: "1:125066649245:web:ee47f0e2b4bbf892f77e74",
+          messagingSenderId: "125066649245",
+          projectId: "hocam-bot"));
+
   runApp(const ChatbotApp());
 }
 

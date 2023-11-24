@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
+import 'package:flutter_chatbot/screens/account_popup/account_popup.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({super.key});
@@ -130,6 +131,18 @@ class MainDrawer extends StatelessWidget {
           const SizedBox(
             height: 5,
           ),
+          const Spacer(),
+          ElevatedButton.icon(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const AccountMenuPopup();
+                  },
+                );
+              },
+              icon: const Icon(Icons.person),
+              label: const Text("Giriş Yap/Kayıt Ol"))
         ]);
       },
     ));

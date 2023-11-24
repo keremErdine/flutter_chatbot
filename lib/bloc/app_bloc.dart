@@ -290,7 +290,19 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             message: Message(
                 context: "Bu parola bu kullanıcı için yanlış. Yine deneyiniz.",
                 sender: Sender.system)));
+      } else {
+        e.code.contains('INVALID_LOGIN_CREDENTIALS');
+        print(e.message);
+        add(AppMessageWritten(
+            message: Message(context: e.code, sender: Sender.system)));
       }
+    }
+
+    print(credential);
+    if (credential == null) {
+      add(AppMessageWritten(
+          message:
+              Message(context: "Bir hata oluştu.", sender: Sender.system)));
     }
 
     emit(state.copyWith(credential: credential));
