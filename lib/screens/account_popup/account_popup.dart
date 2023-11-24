@@ -39,12 +39,21 @@ class AccountMenuPopup extends StatelessWidget {
             onPressed: () {
               context.read<AppBloc>().add(AppUserLoggedIn(
                   email: emailController.value.text,
-                  password: emailController.value.text));
+                  password: passwordController.value.text));
             },
             child: Text(
               "Giriş Yap",
               style: Theme.of(context).textTheme.headlineSmall,
             )),
+        const SizedBox(
+          height: 15,
+        ),
+        TextButton(
+            onPressed: () {},
+            child: Text(
+              "Hesabın yok mu? Hesap oluştur.",
+              style: Theme.of(context).textTheme.labelSmall,
+            ))
       ],
     );
     return BlocConsumer<AppBloc, AppState>(
@@ -81,12 +90,22 @@ class AccountMenuPopup extends StatelessWidget {
                   onPressed: () {
                     context.read<AppBloc>().add(AppUserLoggedIn(
                         email: emailController.value.text,
-                        password: emailController.value.text));
+                        password: passwordController.value.text));
+                    Navigator.of(context).pop();
                   },
                   child: Text(
                     "Giriş Yap",
                     style: Theme.of(context).textTheme.headlineSmall,
                   )),
+              const SizedBox(
+                height: 15,
+              ),
+              TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Hesabın yok mu? Hesap oluştur.",
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ))
             ],
           );
         } else {
@@ -118,11 +137,25 @@ class AccountMenuPopup extends StatelessWidget {
                 height: 7,
               ),
               ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<AppBloc>().add(AppUserSignedUp(
+                        email: emailController.value.text,
+                        password: passwordController.value.text));
+                    Navigator.of(context).pop();
+                  },
                   child: Text(
                     "Hesap Oluştur",
                     style: Theme.of(context).textTheme.headlineSmall,
                   )),
+              const SizedBox(
+                height: 15,
+              ),
+              TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Zaten hesabın var mı? Giriş yap.",
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ))
             ],
           );
         }

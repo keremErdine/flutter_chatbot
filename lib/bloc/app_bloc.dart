@@ -43,6 +43,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppAITemperatureSelected>(appAITemperatureSelected);
     on<AppUserLoggedIn>(appUserLoggedIn);
     on<AppUserSignedUp>(appUserSignedUp);
+    on<AppAccountMenuPageChanged>(appAccountMenuPageChanged);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -274,10 +275,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void appUserLoggedIn(AppUserLoggedIn event, Emitter emit) async {
-    UserCredential? credential;
+    print(event.email);
+    print(event.password);
     try {
-      credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: event.email, password: event.password);
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: event.email, password: event.password)
+          .then((value) {
+        emit(state.copyWith(credential: value));
+      });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         add(AppMessageWritten(
@@ -297,15 +303,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             message: Message(context: e.code, sender: Sender.system)));
       }
     }
-
-    print(credential);
-    if (credential == null) {
-      add(AppMessageWritten(
-          message:
-              Message(context: "Bir hata oluştu.", sender: Sender.system)));
-    }
-
-    emit(state.copyWith(credential: credential));
+    print(state.credential);
   }
 
   void appUserSignedUp(AppUserSignedUp event, Emitter emit) async {
@@ -337,5 +335,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
 
     emit(state.copyWith(credential: credential));
+  }
+
+  void appAccountMenuPageChanged(
+      AppAccountMenuPageChanged event, Emitter emit) {
+    emit(state.copyWith(currentAcountMenu: event.accountMenu));
   }
 }

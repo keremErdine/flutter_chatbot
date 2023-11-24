@@ -53,3 +53,8 @@ class AppUserSignedUp extends AppEvent {
   final String email;
   final String password;
 }
+
+class AppAccountMenuPageChanged extends AppEvent {
+  AppAccountMenuPageChanged({required this.accountMenu});
+  final AccountMenu accountMenu;
+}
