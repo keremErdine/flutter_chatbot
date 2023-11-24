@@ -273,7 +273,29 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     await prefs.setInt("ai_temperature", temperatureValue);
   }
 
-  void appUserLoggedIn(AppUserLoggedIn event, Emitter emit) {}
+  void appUserLoggedIn(AppUserLoggedIn event, Emitter emit) async {
+    UserCredential? credential;
+    try {
+      credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: event.email, password: event.password);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        add(AppMessageWritten(
+            message: Message(
+                context:
+                    "Bu e-postayı kullanan bir kullanıcı bulunamadı. Hesap mı açmak istemiştiniz?",
+                sender: Sender.system)));
+      } else if (e.code == 'wrong-password') {
+        add(AppMessageWritten(
+            message: Message(
+                context: "Bu parola bu kullanıcı için yanlış. Yine deneyiniz.",
+                sender: Sender.system)));
+      }
+    }
+
+    emit(state.copyWith(credential: credential));
+  }
+
   void appUserSignedUp(AppUserSignedUp event, Emitter emit) async {
     UserCredential? credential;
     try {
