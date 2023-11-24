@@ -340,7 +340,24 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void _userSetup({required String uid, required String userName}) async {
     CollectionReference users = FirebaseFirestore.instance.collection("Users");
-    await users.add({"uid": uid, "userName": userName});
+    await users.add({
+      "uid": uid,
+      "userName": userName,
+      "messages": state.messages.map(
+        (message) => message.context,
+      ),
+      "messageSenders": state.messages.map(
+        (message) {
+          if (message.sender == Sender.bot) {
+            return "bot";
+          } else if (message.sender == Sender.user) {
+            return "user";
+          } else if (message.sender == Sender.system) {
+            return "system";
+          }
+        },
+      )
+    });
   }
 
   void appAccountMenuPageChanged(
