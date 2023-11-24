@@ -41,3 +41,15 @@ class AppAITemperatureSelected extends AppEvent {
   AppAITemperatureSelected({required this.temperature});
   final Temperature temperature;
 }
+
+class AppUserLoggedIn extends AppEvent {
+  AppUserLoggedIn({required this.email, required this.password});
+  final String email;
+  final String password;
+}
+
+class AppUserSignedUp extends AppEvent {
+  AppUserSignedUp({required this.email, required this.password});
+  final String email;
+  final String password;
+}

@@ -15,7 +15,8 @@ class AppState {
       required this.prefs,
       required this.apiKey,
       required this.temperature,
-      required this.currentAcountMenu});
+      required this.currentAcountMenu,
+      required this.credential});
 
   final List<Message> messages;
   final List<lang_chain.Document> documents;
@@ -25,14 +26,16 @@ class AppState {
   final Temperature temperature;
   final Future<SharedPreferences> prefs;
   final AccountMenu currentAcountMenu;
+  FirebaseAuth? credential;
 
   factory AppState.initial() {
     return AppState(
         messages: [
           Message(
-              context:
-                  "Aşağıdaki kutucuğa yazı yazarak soru sorunuz. Hocam Bot(Yapay Zeka) sorunu yanıtlamaya çalışacaktır.",
-              sender: Sender.system),
+            context:
+                "Aşağıdaki kutucuğa yazı yazarak soru sorunuz. Hocam Bot(Yapay Zeka) sorunu yanıtlamaya çalışacaktır.",
+            sender: Sender.system,
+          ),
         ],
         documents: [],
         generatingResponse: false,
