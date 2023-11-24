@@ -43,7 +43,8 @@ class AppState {
         prefs: SharedPreferences.getInstance(),
         apiKey: "",
         temperature: Temperature.normal,
-        currentAcountMenu: AccountMenu.login);
+        currentAcountMenu: AccountMenu.login,
+        credential: null);
   }
 
   AppState copyWith(
@@ -54,7 +55,8 @@ class AppState {
       bool? appStartup,
       String? apiKey,
       Temperature? temperature,
-      AccountMenu? currentAcountMenu}) {
+      AccountMenu? currentAcountMenu,
+      FirebaseAuth? credential}) {
     return AppState(
         messages: messages ?? this.messages,
         documents: documents ?? this.documents,
@@ -63,7 +65,8 @@ class AppState {
         prefs: prefs,
         apiKey: apiKey ?? this.apiKey,
         temperature: temperature ?? this.temperature,
-        currentAcountMenu: currentAcountMenu ?? this.currentAcountMenu);
+        currentAcountMenu: currentAcountMenu ?? this.currentAcountMenu,
+        credential: credential ?? this.credential);
   }
 
   AppState addMessage(Message message) {
@@ -76,6 +79,7 @@ class AppState {
         prefs: prefs,
         apiKey: apiKey,
         temperature: temperature,
-        currentAcountMenu: currentAcountMenu);
+        currentAcountMenu: currentAcountMenu,
+        credential: credential);
   }
 }
