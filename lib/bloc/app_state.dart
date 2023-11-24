@@ -26,7 +26,7 @@ class AppState {
   final Temperature temperature;
   final Future<SharedPreferences> prefs;
   final AccountMenu currentAcountMenu;
-  FirebaseAuth? credential;
+  UserCredential? credential;
 
   factory AppState.initial() {
     return AppState(
@@ -56,7 +56,7 @@ class AppState {
       String? apiKey,
       Temperature? temperature,
       AccountMenu? currentAcountMenu,
-      FirebaseAuth? credential}) {
+      UserCredential? credential}) {
     return AppState(
         messages: messages ?? this.messages,
         documents: documents ?? this.documents,

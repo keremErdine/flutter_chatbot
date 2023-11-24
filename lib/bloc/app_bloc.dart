@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:bloc/bloc.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
@@ -272,5 +274,34 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void appUserLoggedIn(AppUserLoggedIn event, Emitter emit) {}
-  void appUserSignedUp(AppUserSignedUp event, Emitter emit) {}
+  void appUserSignedUp(AppUserSignedUp event, Emitter emit) async {
+    UserCredential? credential;
+    try {
+      credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: event.email,
+        password: event.password,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        add(AppMessageWritten(
+            message: Message(
+                context: "Girdiğiniz parola çok zayıf. Yine deneyiniz.",
+                sender: Sender.system)));
+      } else if (e.code == 'email-already-in-use') {
+        add(AppMessageWritten(
+            message: Message(
+                context:
+                    "Girdiğiniz e-posta zaten kullanılıyor. Yine deneyiniz.",
+                sender: Sender.system)));
+      }
+    } catch (e) {
+      add(AppMessageWritten(
+          message: Message(
+              context: "Başka bir hata oluştu. Yine deneyiniz.",
+              sender: Sender.system)));
+      print(e);
+    }
+
+    emit(state.copyWith(credential: credential));
+  }
 }
