@@ -39,6 +39,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppMessageAddedToPrefs>(appMessageAddedToPrefs);
     on<AppApiKeyEntered>(appApiKeyEntered);
     on<AppAITemperatureSelected>(appAITemperatureSelected);
+    on<AppUserLoggedIn>(appUserLoggedIn);
+    on<AppUserSignedUp>(appUserSignedUp);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -268,4 +270,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     await prefs.setInt("ai_temperature", temperatureValue);
   }
+
+  void appUserLoggedIn(AppUserLoggedIn event, Emitter emit) {}
+  void appUserSignedUp(AppUserSignedUp event, Emitter emit) {}
 }
