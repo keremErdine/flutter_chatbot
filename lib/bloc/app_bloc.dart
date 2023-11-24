@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unused_local_variable
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -39,12 +39,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppScreenChanged>(appScreenChanged);
     on<AppChatHistoryCleared>(appChatHistoryCleared);
     on<AppDataFromPrefsRead>(appDataFromPrefsRead);
-    on<AppMessageAddedToPrefs>(appMessageAddedToPrefs);
+    on<AppMessageAddedToFirestore>(appMessageAddedToFirestore);
     on<AppApiKeyEntered>(appApiKeyEntered);
     on<AppAITemperatureSelected>(appAITemperatureSelected);
     on<AppUserLoggedIn>(appUserLoggedIn);
     on<AppUserSignedUp>(appUserSignedUp);
     on<AppAccountMenuPageChanged>(appAccountMenuPageChanged);
+    on<AppFirebaseDataRead>(appFirebaseDataRead);
   }
 
   void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
@@ -58,7 +59,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
     emit(state.addMessage(event.message));
-    add(AppMessageAddedToPrefs());
+    add(AppMessageAddedToFirestore());
     if (state.apiKey.isEmpty && event.message.sender != Sender.system) {
       add(AppMessageWritten(
           message: Message(
@@ -202,34 +203,41 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         temperature: temperatureEnum));
   }
 
-  void appMessageAddedToPrefs(
-      AppMessageAddedToPrefs event, Emitter emit) async {
-    final SharedPreferences prefs = await state.prefs;
-    final List<String> messages = [];
-    final List<String> senders = [];
-    for (var message in state.messages) {
-      messages.add(message.context);
-      switch (message.sender) {
-        case Sender.user:
-          senders.add("user");
-          break;
-        case Sender.bot:
-          senders.add("bot");
-          break;
-        default:
-          senders.add("system");
+  void appMessageAddedToFirestore(
+      AppMessageAddedToFirestore event, Emitter emit) async {
+    try {
+      final CollectionReference users =
+          FirebaseFirestore.instance.collection("Users");
+      final String uid = state.credential!.user!.uid;
+      final List<String> messages = [];
+      final List<String> senders = [];
+      for (var message in state.messages) {
+        if (message.sender != Sender.system) {
+          messages.add(message.context);
+          switch (message.sender) {
+            case Sender.user:
+              senders.add("user");
+              break;
+            default:
+              senders.add("bot");
+          }
+        }
       }
+      users.doc(uid).set({"messages": messages, "messageSenders": senders},
+          SetOptions(merge: true));
+    } catch (e) {
+      print(e);
     }
-    await prefs.setStringList("messages", messages);
-    await prefs.setStringList("message_senders", senders);
   }
 
   void appApiKeyEntered(AppApiKeyEntered event, Emitter emit) async {
     llm = ChatOpenAI(apiKey: event.apiKey, model: "gpt-3.5-turbo-1106");
     embeddings = OpenAIEmbeddings(apiKey: event.apiKey);
     emit(state.copyWith(apiKey: event.apiKey));
-    SharedPreferences prefs = await state.prefs;
-    await prefs.setString("user_api_key", event.apiKey);
+    final CollectionReference users =
+        FirebaseFirestore.instance.collection("Users");
+    final String uid = state.credential!.user!.uid;
+    await users.doc(uid).set({"apiKey": event.apiKey}, SetOptions(merge: true));
   }
 
   void appAITemperatureSelected(
@@ -276,14 +284,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void appUserLoggedIn(AppUserLoggedIn event, Emitter emit) async {
-    print(event.email);
-    print(event.password);
     try {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(
               email: event.email, password: event.password)
           .then((value) {
         emit(state.copyWith(credential: value));
+        add(AppFirebaseDataRead());
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -292,7 +299,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                 context:
                     "Bu e-postayı kullanan bir kullanıcı bulunamadı. Hesap mı açmak istemiştiniz?",
                 sender: Sender.system)));
-      } else if (e.code == 'wrong-password') {
+      } else if (e.code == 'invalid-login-creditials') {
         add(AppMessageWritten(
             message: Message(
                 context: "Bu parola bu kullanıcı için yanlış. Yine deneyiniz.",
@@ -304,7 +311,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             message: Message(context: e.code, sender: Sender.system)));
       }
     }
-    print(state.credential);
   }
 
   void appUserSignedUp(AppUserSignedUp event, Emitter emit) async {
@@ -336,16 +342,19 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       print(e);
     }
     emit(state.copyWith(credential: credential));
+    add(AppFirebaseDataRead());
   }
 
   void _userSetup({required String uid, required String userName}) async {
-    CollectionReference users = FirebaseFirestore.instance.collection("Users");
-    await users.add({
+    final CollectionReference users =
+        FirebaseFirestore.instance.collection("Users");
+    await users.doc(uid).set({
       "uid": uid,
       "userName": userName,
       "messages": state.messages.map(
         (message) => message.context,
       ),
+      "apiKey": "",
       "messageSenders": state.messages.map(
         (message) {
           if (message.sender == Sender.bot) {
@@ -357,7 +366,41 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           }
         },
       )
+    }).then((value) {
+      print("New user sucesfully created");
     });
+  }
+
+  void appFirebaseDataRead(AppFirebaseDataRead event, Emitter emit) async {
+    final CollectionReference users =
+        FirebaseFirestore.instance.collection("Users");
+    final DocumentSnapshot userData =
+        await users.doc(state.credential!.user!.uid).get();
+    final List messages = await userData.get("messages") as List<dynamic>;
+
+    final List senders = await userData.get("messageSenders") as List<dynamic>;
+    final List<Message> decodedMessages = <Message>[];
+    final String apiKey = await userData.get("apiKey") as String;
+
+    if (messages != []) {
+      for (var message in messages) {
+        Sender decodedSender = Sender.system;
+        if (senders[messages.indexOf(message)] == "bot") {
+          decodedSender = Sender.bot;
+        } else if (senders[messages.indexOf(message)] == "user") {
+          decodedSender = Sender.user;
+        }
+        decodedMessages.add(Message(context: message, sender: decodedSender));
+      }
+    }
+
+    if (apiKey.isNotEmpty) {
+      llm = ChatOpenAI(
+          apiKey: apiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
+      embeddings = OpenAIEmbeddings(apiKey: apiKey);
+    }
+
+    emit(state.copyWith(messages: decodedMessages, apiKey: apiKey));
   }
 
   void appAccountMenuPageChanged(

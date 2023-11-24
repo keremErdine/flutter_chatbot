@@ -30,7 +30,7 @@ class AppChatHistoryCleared extends AppEvent {}
 class AppDataFromPrefsRead extends AppEvent {}
 
 @immutable
-class AppMessageAddedToPrefs extends AppEvent {}
+class AppMessageAddedToFirestore extends AppEvent {}
 
 class AppApiKeyEntered extends AppEvent {
   AppApiKeyEntered({required this.apiKey});
@@ -60,3 +60,6 @@ class AppAccountMenuPageChanged extends AppEvent {
   AppAccountMenuPageChanged({required this.accountMenu});
   final AccountMenu accountMenu;
 }
+
+@immutable
+class AppFirebaseDataRead extends AppEvent {}

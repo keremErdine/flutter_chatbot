@@ -32,8 +32,7 @@ class AppState {
     return AppState(
         messages: [
           Message(
-            context:
-                "Aşağıdaki kutucuğa yazı yazarak soru sorunuz. Hocam Bot(Yapay Zeka) sorunu yanıtlamaya çalışacaktır.",
+            context: "Hocam Bot'u kullanmaya başlamak için giriş yapın.",
             sender: Sender.system,
           ),
         ],
