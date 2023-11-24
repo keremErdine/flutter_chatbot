@@ -9,6 +9,7 @@ class AccountMenuPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
+    TextEditingController userNameController = TextEditingController();
     String textContext =
         "Uygulamayı daha iyi bir şekilde kullanmak için bir hesaba giriş yapın.";
     Widget mainWidget = Column(
@@ -49,7 +50,10 @@ class AccountMenuPopup extends StatelessWidget {
           height: 15,
         ),
         TextButton(
-            onPressed: () {},
+            onPressed: () {
+              context.read<AppBloc>().add(
+                  AppAccountMenuPageChanged(accountMenu: AccountMenu.signup));
+            },
             child: Text(
               "Hesabın yok mu? Hesap oluştur.",
               style: Theme.of(context).textTheme.labelSmall,
@@ -101,7 +105,10 @@ class AccountMenuPopup extends StatelessWidget {
                 height: 15,
               ),
               TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<AppBloc>().add(AppAccountMenuPageChanged(
+                        accountMenu: AccountMenu.signup));
+                  },
                   child: Text(
                     "Hesabın yok mu? Hesap oluştur.",
                     style: Theme.of(context).textTheme.labelSmall,
@@ -114,6 +121,15 @@ class AccountMenuPopup extends StatelessWidget {
           //signup
           mainWidget = Column(
             children: [
+              const SizedBox(
+                height: 5,
+              ),
+              TextField(
+                controller: userNameController,
+                decoration: const InputDecoration(hintText: "Kullanıcı Adı"),
+                autocorrect: false,
+                autofocus: true,
+              ),
               const SizedBox(
                 height: 5,
               ),
@@ -139,6 +155,7 @@ class AccountMenuPopup extends StatelessWidget {
               ElevatedButton(
                   onPressed: () {
                     context.read<AppBloc>().add(AppUserSignedUp(
+                        userName: userNameController.value.text,
                         email: emailController.value.text,
                         password: passwordController.value.text));
                     Navigator.of(context).pop();
@@ -151,7 +168,10 @@ class AccountMenuPopup extends StatelessWidget {
                 height: 15,
               ),
               TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<AppBloc>().add(AppAccountMenuPageChanged(
+                        accountMenu: AccountMenu.login));
+                  },
                   child: Text(
                     "Zaten hesabın var mı? Giriş yap.",
                     style: Theme.of(context).textTheme.labelSmall,

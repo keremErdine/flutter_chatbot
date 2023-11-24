@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chatbot/api_key.dart';
@@ -313,6 +314,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         email: event.email,
         password: event.password,
       );
+      _userSetup(uid: credential.user!.uid, userName: event.userName);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         add(AppMessageWritten(
@@ -333,8 +335,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
               sender: Sender.system)));
       print(e);
     }
-
     emit(state.copyWith(credential: credential));
+  }
+
+  void _userSetup({required String uid, required String userName}) async {
+    CollectionReference users = FirebaseFirestore.instance.collection("Users");
+    await users.add({"uid": uid, "userName": userName});
   }
 
   void appAccountMenuPageChanged(

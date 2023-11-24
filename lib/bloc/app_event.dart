@@ -49,9 +49,11 @@ class AppUserLoggedIn extends AppEvent {
 }
 
 class AppUserSignedUp extends AppEvent {
-  AppUserSignedUp({required this.email, required this.password});
+  AppUserSignedUp(
+      {required this.email, required this.password, required this.userName});
   final String email;
   final String password;
+  final String userName;
 }
 
 class AppAccountMenuPageChanged extends AppEvent {
