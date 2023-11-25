@@ -133,28 +133,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appDataFromPrefsRead(AppDataFromPrefsRead event, Emitter emit) async {
     final SharedPreferences prefs = await state.prefs;
-    Screen screen = Screen.loadingScreen;
-    List<String>? messages = prefs.getStringList("messages");
-    List<String>? senders = prefs.getStringList("message_senders");
-    List<Message> decodedMessages = <Message>[];
 
-    if (messages == null) {
-      await prefs.setStringList("messages", [
-        "Aşağıdaki kutucuğa yazı yazarak soru sorunuz. Hocam Bot(Yapay Zeka) sorunu yanıtlamaya çalışacaktır."
-      ]);
-      await prefs.setStringList("message_senders", ["system"]);
-    } else {
-      for (var message in messages) {
-        Sender decodedSender = Sender.system;
-        if (senders![messages.indexOf(message)] == "bot") {
-          decodedSender = Sender.bot;
-        } else if (senders[messages.indexOf(message)] == "user") {
-          decodedSender = Sender.user;
-        }
-        decodedMessages.add(Message(context: message, sender: decodedSender));
-      }
+    String? email = prefs.getString("email");
+    String? password = prefs.getString("password");
+    if (email != null && password != null) {
+      add(AppUserLoggedIn(email: email, password: password));
     }
 
+    Screen screen = Screen.loadingScreen;
     switch (prefs.getString("screen")) {
       case "chat":
         screen = Screen.chatScreen;
@@ -205,10 +191,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
 
     emit(state.copyWith(
-        screen: screen,
-        messages: decodedMessages,
-        apiKey: apiKey,
-        temperature: temperatureEnum));
+        screen: screen, apiKey: apiKey, temperature: temperatureEnum));
   }
 
   void appMessageAddedToFirestore(
@@ -296,9 +279,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(
               email: event.email, password: event.password)
-          .then((value) {
+          .then((value) async {
         emit(state.copyWith(credential: value));
         add(AppFirebaseDataRead());
+        final SharedPreferences prefs = await state.prefs;
+        prefs.setString("email", event.email);
+        prefs.setString("password", event.password);
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -329,6 +315,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         password: event.password,
       );
       _userSetup(uid: credential.user!.uid, userName: event.userName);
+      final SharedPreferences prefs = await state.prefs;
+      prefs.setString("email", event.email);
+      prefs.setString("password", event.password);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         add(AppMessageWritten(
