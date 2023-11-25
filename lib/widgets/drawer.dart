@@ -132,17 +132,20 @@ class MainDrawer extends StatelessWidget {
             height: 5,
           ),
           const Spacer(),
-          ElevatedButton.icon(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return const AccountMenuPopup();
-                  },
-                );
-              },
-              icon: const Icon(Icons.person),
-              label: const Text("Giriş Yap/Kayıt Ol"))
+          if (state.loggedIn)
+            ElevatedButton.icon(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const AccountMenuPopup();
+                    },
+                  );
+                },
+                icon: const Icon(Icons.person),
+                label: const Text("Giriş Yap/Kayıt Ol"))
+          else
+            Text("Merhaba ${state.userName}."),
         ]);
       },
     ));

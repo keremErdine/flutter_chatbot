@@ -59,6 +59,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
     emit(state.addMessage(event.message));
+    if (!state.loggedIn) {
+      add(AppMessageWritten(
+          message: Message(
+              context:
+                  "Bir hesaba giriş yapmadığınızdan dolayı bu uygulamayı kullanmazsınız.",
+              sender: Sender.system)));
+      return;
+    }
     add(AppMessageAddedToFirestore());
     if (state.apiKey.isEmpty && event.message.sender != Sender.system) {
       add(AppMessageWritten(
@@ -376,6 +384,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         FirebaseFirestore.instance.collection("Users");
     final DocumentSnapshot userData =
         await users.doc(state.credential!.user!.uid).get();
+    final String userName = await userData.get("userName") as String;
     final List messages = await userData.get("messages") as List<dynamic>;
 
     final List senders = await userData.get("messageSenders") as List<dynamic>;
@@ -390,7 +399,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         } else if (senders[messages.indexOf(message)] == "user") {
           decodedSender = Sender.user;
         }
-        decodedMessages.add(Message(context: message, sender: decodedSender));
+        decodedMessages.add(Message(
+          context: message,
+          sender: decodedSender,
+        ));
       }
     }
 
@@ -400,7 +412,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       embeddings = OpenAIEmbeddings(apiKey: apiKey);
     }
 
-    emit(state.copyWith(messages: decodedMessages, apiKey: apiKey));
+    emit(state.copyWith(
+        messages: decodedMessages, apiKey: apiKey, userName: userName));
   }
 
   void appAccountMenuPageChanged(

@@ -16,7 +16,9 @@ class AppState {
       required this.apiKey,
       required this.temperature,
       required this.currentAcountMenu,
-      required this.credential});
+      required this.credential,
+      required this.loggedIn,
+      required this.userName});
 
   final List<Message> messages;
   final List<lang_chain.Document> documents;
@@ -26,6 +28,8 @@ class AppState {
   final Temperature temperature;
   final Future<SharedPreferences> prefs;
   final AccountMenu currentAcountMenu;
+  final bool loggedIn;
+  final String userName;
   UserCredential? credential;
 
   factory AppState.initial() {
@@ -43,7 +47,9 @@ class AppState {
         apiKey: "",
         temperature: Temperature.normal,
         currentAcountMenu: AccountMenu.login,
-        credential: null);
+        credential: null,
+        loggedIn: false,
+        userName: "");
   }
 
   AppState copyWith(
@@ -55,7 +61,9 @@ class AppState {
       String? apiKey,
       Temperature? temperature,
       AccountMenu? currentAcountMenu,
-      UserCredential? credential}) {
+      UserCredential? credential,
+      bool? loggedIn,
+      String? userName}) {
     return AppState(
         messages: messages ?? this.messages,
         documents: documents ?? this.documents,
@@ -65,7 +73,9 @@ class AppState {
         apiKey: apiKey ?? this.apiKey,
         temperature: temperature ?? this.temperature,
         currentAcountMenu: currentAcountMenu ?? this.currentAcountMenu,
-        credential: credential ?? this.credential);
+        credential: credential ?? this.credential,
+        loggedIn: loggedIn ?? this.loggedIn,
+        userName: userName ?? this.userName);
   }
 
   AppState addMessage(Message message) {
@@ -79,6 +89,8 @@ class AppState {
         apiKey: apiKey,
         temperature: temperature,
         currentAcountMenu: currentAcountMenu,
-        credential: credential);
+        credential: credential,
+        loggedIn: loggedIn,
+        userName: userName);
   }
 }
