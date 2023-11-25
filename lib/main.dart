@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chatbot/api_key.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
 import 'package:flutter_chatbot/screens/chat/chat_screen.dart';
 import 'package:flutter_chatbot/screens/chat/config_ai_popup.dart';
@@ -14,10 +15,10 @@ void main() async {
 
   await Firebase.initializeApp(
       options: const FirebaseOptions(
-          apiKey: "AIzaSyB9x1ghuYrV5VQ7EtQGFM_EyHBFZAKvjPQ",
-          appId: "1:125066649245:web:ee47f0e2b4bbf892f77e74",
-          messagingSenderId: "125066649245",
-          projectId: "hocam-bot"));
+          apiKey: firebaseApiKey,
+          appId: firebaseAppID,
+          messagingSenderId: firebaseMessagingSenderID,
+          projectId: firebaseProjectID));
 
   runApp(const ChatbotApp());
 }
