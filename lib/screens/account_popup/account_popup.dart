@@ -53,6 +53,8 @@ class AccountMenuPopup extends StatelessWidget {
             onPressed: () {
               context.read<AppBloc>().add(
                   AppAccountMenuPageChanged(accountMenu: AccountMenu.signup));
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
             },
             child: Text(
               "Hesabın yok mu? Hesap oluştur.",
@@ -108,6 +110,8 @@ class AccountMenuPopup extends StatelessWidget {
                   onPressed: () {
                     context.read<AppBloc>().add(AppAccountMenuPageChanged(
                         accountMenu: AccountMenu.signup));
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
                   },
                   child: Text(
                     "Hesabın yok mu? Hesap oluştur.",
@@ -171,6 +175,8 @@ class AccountMenuPopup extends StatelessWidget {
                   onPressed: () {
                     context.read<AppBloc>().add(AppAccountMenuPageChanged(
                         accountMenu: AccountMenu.login));
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
                   },
                   child: Text(
                     "Zaten hesabın var mı? Giriş yap.",

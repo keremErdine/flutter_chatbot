@@ -59,11 +59,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
     emit(state.addMessage(event.message));
-    if (!state.loggedIn) {
+    if (state.loggedIn == false && event.message.sender != Sender.system) {
       add(AppMessageWritten(
           message: Message(
               context:
-                  "Bir hesaba giriş yapmadığınızdan dolayı bu uygulamayı kullanmazsınız.",
+                  "Giriş yapmadığınız için bu uygulamayı kullanamazsınız. Lütfen giriş yapın.",
               sender: Sender.system)));
       return;
     }

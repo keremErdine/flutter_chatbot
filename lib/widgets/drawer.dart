@@ -132,7 +132,7 @@ class MainDrawer extends StatelessWidget {
             height: 5,
           ),
           const Spacer(),
-          if (state.loggedIn)
+          if (!state.loggedIn)
             ElevatedButton.icon(
                 onPressed: () {
                   showDialog(
