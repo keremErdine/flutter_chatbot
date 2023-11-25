@@ -17,7 +17,7 @@ part 'app_state.dart';
 
 ChatOpenAI llm =
     ChatOpenAI(apiKey: "", model: "gpt-3.5-turbo-1106", temperature: 0.25);
-OpenAIEmbeddings embeddings = OpenAIEmbeddings(apiKey: openAIapiKey);
+OpenAIEmbeddings embeddings = OpenAIEmbeddings(apiKey: "");
 final Pinecone vectorStore = Pinecone(
     apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
 final lang_chain.RetrievalQAChain qaChain = lang_chain.RetrievalQAChain.fromLlm(
