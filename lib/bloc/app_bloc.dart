@@ -293,14 +293,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                 context:
                     "Bu e-postayı kullanan bir kullanıcı bulunamadı. Hesap mı açmak istemiştiniz?",
                 sender: Sender.system)));
-      } else if (e.code == 'invalid-login-creditials') {
+      } else if (e.code == 'invalid-login-credentials') {
         add(AppMessageWritten(
             message: Message(
                 context: "Bu parola bu kullanıcı için yanlış. Yine deneyiniz.",
                 sender: Sender.system)));
       } else {
-        e.code.contains('INVALID_LOGIN_CREDENTIALS');
-        print(e.message);
         add(AppMessageWritten(
             message: Message(context: e.code, sender: Sender.system)));
       }
