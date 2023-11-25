@@ -15,8 +15,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 part 'app_event.dart';
 part 'app_state.dart';
 
-ChatOpenAI llm = ChatOpenAI(
-    apiKey: openAIapiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
+ChatOpenAI llm =
+    ChatOpenAI(apiKey: "", model: "gpt-3.5-turbo-1106", temperature: 0.25);
 OpenAIEmbeddings embeddings = OpenAIEmbeddings(apiKey: openAIapiKey);
 final Pinecone vectorStore = Pinecone(
     apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
@@ -395,7 +395,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     if (apiKey.isNotEmpty) {
       llm = ChatOpenAI(
-          apiKey: apiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
+          apiKey: "", model: "gpt-3.5-turbo-1106", temperature: 0.25);
       embeddings = OpenAIEmbeddings(apiKey: apiKey);
     }
 
