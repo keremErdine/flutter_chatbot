@@ -2,7 +2,6 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chatbot/api_key.dart';
 import 'package:flutter_chatbot/classes/message.dart';
