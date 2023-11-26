@@ -128,7 +128,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     String? email = prefs.getString("email");
     String? password = prefs.getString("password");
-    if (email != null && password != null) {
+    if (email != null &&
+        password != null &&
+        email.isNotEmpty &&
+        password.isNotEmpty) {
       add(AppUserLoggedIn(email: email, password: password));
     }
 
@@ -391,7 +394,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(state.copyWith(currentAcountMenu: event.accountMenu));
   }
 
-  void appUserLoggedOut(AppUserLoggedOut event, Emitter emit) {
+  void appUserLoggedOut(AppUserLoggedOut event, Emitter emit) async {
     emit(state.copyWith(
         messages: <Message>[],
         apiKey: "",
@@ -403,5 +406,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     add(AppMessageWritten(
         message:
             Message(context: "Hesabından çıktın.", sender: Sender.system)));
+    SharedPreferences prefs = await state.prefs;
+    await prefs.setString("email", "");
+    await prefs.setString("password", "");
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
+import 'package:flutter_chatbot/screens/account_popup/account_popup.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -24,6 +25,10 @@ class WelcomeScreen extends StatelessWidget {
           const Spacer(),
           ElevatedButton(
               onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => const AccountMenuPopup(),
+                );
                 context
                     .read<AppBloc>()
                     .add(AppScreenChanged(screen: Screen.chatScreen));
