@@ -10,8 +10,7 @@ class AccountMenuPopup extends StatelessWidget {
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     TextEditingController userNameController = TextEditingController();
-    String textContext =
-        "Uygulamayı daha iyi bir şekilde kullanmak için bir hesaba giriş yapın.";
+    String textContext = "Uygulamayı kullanmak için bir hesaba giriş yapın.";
     Widget mainWidget = Column(
       children: [
         const SizedBox(
@@ -65,8 +64,7 @@ class AccountMenuPopup extends StatelessWidget {
     return BlocConsumer<AppBloc, AppState>(
       listener: (context, state) {
         if (state.currentAcountMenu == AccountMenu.login) {
-          textContext =
-              "Uygulamayı daha iyi bir şekilde kullanmak için bir hesaba giriş yapın.";
+          textContext = "Uygulamayı kullanmak için bir hesaba giriş yapın.";
           //login
           mainWidget = Column(
             children: [
@@ -120,7 +118,7 @@ class AccountMenuPopup extends StatelessWidget {
           );
         } else {
           textContext =
-              "Uygulamayı daha iyi bir şekilde kullanmaya başlamak için bir hesap oluşturun.";
+              "Uygulamayı kullanmaya başlamak için bir hesap oluşturun.";
           //signup
           mainWidget = Column(
             children: [
