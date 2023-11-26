@@ -11,6 +11,7 @@ class LogoutPopup extends StatelessWidget {
       actions: [
         ElevatedButton.icon(
             onPressed: () {
+              Navigator.of(context).pop();
               context.read<AppBloc>().add(AppUserLoggedOut());
             },
             icon: const Icon(Icons.exit_to_app_outlined),
