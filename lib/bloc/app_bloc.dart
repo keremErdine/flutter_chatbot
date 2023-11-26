@@ -32,7 +32,6 @@ const textSplitter = lang_chain.RecursiveCharacterTextSplitter(
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc() : super(AppState.initial()) {
-    on<AppDocumentAdded>(appDocumentAdded);
     on<AppMessageWritten>(appMessageWritten);
     on<AppAIStartedGeneratingResponse>(appAIStartedGeneratingResponse);
     on<AppAIFinishedGeneratingResponse>(appAIFinishedGeneratingResponse);
@@ -46,15 +45,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppUserSignedUp>(appUserSignedUp);
     on<AppAccountMenuPageChanged>(appAccountMenuPageChanged);
     on<AppFirebaseDataRead>(appFirebaseDataRead);
-  }
-
-  void appDocumentAdded(AppDocumentAdded event, Emitter emit) async {
-    final lang_chain.TextLoader loader =
-        lang_chain.TextLoader(event.document.path);
-    final docs = await loader.load();
-    final splittedDocs = textSplitter.splitDocuments(docs);
-
-    vectorStore.addDocuments(documents: splittedDocs);
   }
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
@@ -126,9 +116,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appChatHistoryCleared(AppChatHistoryCleared event, Emitter emit) async {
     emit(state.copyWith(messages: []));
-    final SharedPreferences prefs = await state.prefs;
-    await prefs.setStringList("messages", <String>[]);
-    await prefs.setStringList("message_senders", <String>[]);
+    final CollectionReference users =
+        FirebaseFirestore.instance.collection("Users");
+    final String uid = state.credential!.user!.uid;
+    users.doc(uid).set({"messages": <String>[], "messageSenders": <String>[]},
+        SetOptions(merge: true));
   }
 
   void appDataFromPrefsRead(AppDataFromPrefsRead event, Emitter emit) async {
@@ -152,46 +144,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         screen = Screen.welcomeScreen;
         await prefs.setString("screen", "welcome");
     }
-
-    int temperatureValue = prefs.getInt("ai_temperature") ?? 0;
-    Temperature temperatureEnum = Temperature.normal;
-    double aiTemperature = 0.25;
-    switch (temperatureValue) {
-      case 1:
-        aiTemperature = 0;
-        temperatureEnum = Temperature.direct;
-        break;
-      case 2:
-        aiTemperature = 0.25;
-        temperatureEnum = Temperature.normal;
-        break;
-      case 3:
-        aiTemperature = 0.5;
-        temperatureEnum = Temperature.high;
-        break;
-      case 4:
-        aiTemperature = 0.75;
-        temperatureEnum = Temperature.extreme;
-        break;
-      case 5:
-        aiTemperature = 1;
-        temperatureEnum = Temperature.overkill;
-        break;
-      default:
-        await prefs.setInt("ai_temperature", 2);
-    }
-
-    String apiKey = prefs.getString("user_api_key") ?? "";
-    if (apiKey.isNotEmpty) {
-      llm = ChatOpenAI(
-          apiKey: apiKey,
-          model: "gpt-3.5-turbo-1106",
-          temperature: aiTemperature);
-      embeddings = OpenAIEmbeddings(apiKey: apiKey);
-    }
-
     emit(state.copyWith(
-        screen: screen, apiKey: apiKey, temperature: temperatureEnum));
+      screen: screen,
+    ));
   }
 
   void appMessageAddedToFirestore(
@@ -233,6 +188,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appAITemperatureSelected(
       AppAITemperatureSelected event, Emitter emit) async {
+    if (state.loggedIn == false) {
+      return;
+    }
     double temperature = 0.25;
     if (event.temperature == Temperature.direct) {
       temperature = 0;
@@ -257,21 +215,24 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         model: "gpt-3.5-turbo-1106",
         temperature: temperature);
     emit(state.copyWith(temperature: event.temperature));
-    final SharedPreferences prefs = await state.prefs;
-    int temperatureValue = 2;
+    String temperatureValue = "normal";
     if (event.temperature == Temperature.direct) {
-      temperatureValue = 1;
+      temperatureValue = "direct";
     } else if (event.temperature == Temperature.normal) {
-      temperatureValue = 2;
+      temperatureValue = "normal";
     } else if (event.temperature == Temperature.high) {
-      temperatureValue = 3;
+      temperatureValue = "high";
     } else if (event.temperature == Temperature.extreme) {
-      temperatureValue = 4;
+      temperatureValue = "extreme";
     } else if (event.temperature == Temperature.overkill) {
-      temperatureValue = 5;
+      temperatureValue = "overkill";
     }
 
-    await prefs.setInt("ai_temperature", temperatureValue);
+    final CollectionReference users =
+        FirebaseFirestore.instance.collection("Users");
+    await users
+        .doc(state.credential!.user!.uid)
+        .set({"temperature": temperatureValue}, SetOptions(merge: true));
   }
 
   void appUserLoggedIn(AppUserLoggedIn event, Emitter emit) async {
@@ -280,7 +241,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           .signInWithEmailAndPassword(
               email: event.email, password: event.password)
           .then((value) async {
-        emit(state.copyWith(credential: value));
+        emit(state.copyWith(credential: value, loggedIn: true));
         add(AppFirebaseDataRead());
         final SharedPreferences prefs = await state.prefs;
         prefs.setString("email", event.email);
@@ -360,7 +321,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             return "system";
           }
         },
-      )
+      ),
+      "temperature": "normal"
     }).then((value) {
       print("New user sucesfully created");
     });
@@ -393,9 +355,30 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       }
     }
 
+    final String temperatureValue = await userData.get("temperature") as String;
+    double temperature = 0.25;
+    switch (temperatureValue) {
+      case "direct":
+        temperature = 0;
+        break;
+      case "high":
+        temperature = 0.5;
+        break;
+      case "extreme":
+        temperature = 0.75;
+        break;
+      case "overkill":
+        temperature = 1;
+        break;
+      default:
+        temperature = 0.25;
+    }
+
     if (apiKey.isNotEmpty) {
       llm = ChatOpenAI(
-          apiKey: "", model: "gpt-3.5-turbo-1106", temperature: 0.25);
+          apiKey: apiKey,
+          model: "gpt-3.5-turbo-1106",
+          temperature: temperature);
       embeddings = OpenAIEmbeddings(apiKey: apiKey);
     }
 
