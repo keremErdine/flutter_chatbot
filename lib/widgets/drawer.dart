@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
 import 'package:flutter_chatbot/screens/account_popup/account_popup.dart';
+import 'package:flutter_chatbot/widgets/logout_popup.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({super.key});
@@ -145,7 +146,16 @@ class MainDrawer extends StatelessWidget {
                 icon: const Icon(Icons.person),
                 label: const Text("Giriş Yap/Kayıt Ol"))
           else
-            Text("Merhaba ${state.userName}."),
+            TextButton.icon(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => const LogoutPopup(),
+                );
+              },
+              label: Text("Merhaba ${state.userName}."),
+              icon: const Icon(Icons.person),
+            ),
         ]);
       },
     ));

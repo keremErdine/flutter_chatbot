@@ -58,3 +58,6 @@ class AppAccountMenuPageChanged extends AppEvent {
 
 @immutable
 class AppFirebaseDataRead extends AppEvent {}
+
+@immutable
+class AppUserLoggedOut extends AppEvent {}

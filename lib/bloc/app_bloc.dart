@@ -44,6 +44,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppUserSignedUp>(appUserSignedUp);
     on<AppAccountMenuPageChanged>(appAccountMenuPageChanged);
     on<AppFirebaseDataRead>(appFirebaseDataRead);
+    on<AppUserLoggedOut>(appUserLoggedOut);
   }
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
@@ -388,5 +389,19 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appAccountMenuPageChanged(
       AppAccountMenuPageChanged event, Emitter emit) {
     emit(state.copyWith(currentAcountMenu: event.accountMenu));
+  }
+
+  void appUserLoggedOut(AppUserLoggedOut event, Emitter emit) {
+    emit(state.copyWith(
+        messages: <Message>[],
+        apiKey: "",
+        temperature: Temperature.normal,
+        loggedIn: false,
+        credential: null,
+        userName: "",
+        currentAcountMenu: AccountMenu.login));
+    add(AppMessageWritten(
+        message:
+            Message(context: "Hesabından çıktın.", sender: Sender.system)));
   }
 }
