@@ -20,9 +20,9 @@ OpenAIEmbeddings embeddings = OpenAIEmbeddings(apiKey: "");
 final Pinecone vectorStore = Pinecone(
     apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
 final lang_chain.RetrievalQAChain qaChain = lang_chain.RetrievalQAChain.fromLlm(
-  llm: llm,
-  retriever: vectorStore.asRetriever(),
-);
+    llm: llm,
+    retriever: vectorStore.asRetriever(
+        searchType: const lang_chain.VectorStoreSimilaritySearch()));
 
 const textSplitter = lang_chain.RecursiveCharacterTextSplitter(
   chunkSize: 1000,
@@ -76,7 +76,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       }
       try {
         final response = await qaChain.call(
-            'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the documents, truthfully say that you couldn\'t find it. The conversation goes like this:  Student: ${event.message.context}\n You: ');
+            'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this:  Student: ${event.message.context}\n You: ');
 
         add(AppMessageWritten(
             message: Message(context: response['result'], sender: Sender.bot)));
@@ -86,6 +86,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                 context:
                     "Hocam Bot bir yanıt oluştururken bir hata oluştu. Bu doğru bir OpenAI api anahtarı girmediğinizden kaynaklanıyor olabilir.",
                 sender: Sender.system)));
+        print(e);
       }
       add(AppAIFinishedGeneratingResponse());
     }
