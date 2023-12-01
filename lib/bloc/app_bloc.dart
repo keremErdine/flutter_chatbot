@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chatbot/api_key.dart';
 import 'package:flutter_chatbot/classes/message.dart';
+import 'package:flutter_chatbot/debug_tool.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_pinecone/langchain_pinecone.dart';
 import 'package:langchain/langchain.dart' as lang_chain;
@@ -14,9 +15,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 part 'app_event.dart';
 part 'app_state.dart';
 
-ChatOpenAI llm =
-    ChatOpenAI(apiKey: "", model: "gpt-3.5-turbo-1106", temperature: 0.25);
-OpenAIEmbeddings embeddings = OpenAIEmbeddings(apiKey: "");
+ChatOpenAI llm = ChatOpenAI(
+    apiKey: "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",
+    model: "gpt-3.5-turbo-1106",
+    temperature: 0.25);
+OpenAIEmbeddings embeddings = OpenAIEmbeddings(
+    apiKey: "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");
 final Pinecone vectorStore = Pinecone(
     apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
 final lang_chain.RetrievalQAChain qaChain = lang_chain.RetrievalQAChain.fromLlm(
@@ -151,6 +155,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(state.copyWith(
       screen: screen,
     ));
+    addVectorsToStore();
   }
 
   void appMessageAddedToFirestore(
