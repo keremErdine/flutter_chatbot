@@ -90,7 +90,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                 context:
                     "Hocam Bot bir yanıt oluştururken bir hata oluştu. Bu doğru bir OpenAI api anahtarı girmediğinizden kaynaklanıyor olabilir.",
                 sender: Sender.system)));
-        print(e);
+        print(e.toString());
       }
       add(AppAIFinishedGeneratingResponse());
     }
@@ -155,7 +155,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(state.copyWith(
       screen: screen,
     ));
-    addVectorsToStore();
+    //addVectorsToStore();
   }
 
   void appMessageAddedToFirestore(
