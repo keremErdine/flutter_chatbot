@@ -5,12 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chatbot/api_key.dart';
 import 'package:flutter_chatbot/classes/message.dart';
+// ignore: unused_import
 import 'package:flutter_chatbot/debug_tool.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_pinecone/langchain_pinecone.dart';
 import 'package:langchain/langchain.dart' as lang_chain;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert' show utf8;
 
 part 'app_event.dart';
 part 'app_state.dart';
@@ -83,7 +85,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this:  Student: ${event.message.context}\n You: ');
 
         add(AppMessageWritten(
-            message: Message(context: response['result'], sender: Sender.bot)));
+            message: Message(
+                context: utf8.decode(utf8.encode(response['result'])),
+                sender: Sender.bot)));
       } catch (e) {
         add(AppMessageWritten(
             message: Message(
@@ -155,7 +159,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(state.copyWith(
       screen: screen,
     ));
-    //addVectorsToStore();
+    addVectorsToStore();
   }
 
   void appMessageAddedToFirestore(
