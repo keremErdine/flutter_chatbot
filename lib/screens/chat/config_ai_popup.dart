@@ -11,7 +11,6 @@ class ConfigAIPopup extends StatelessWidget {
     return AlertDialog(
       title: const Center(child: Text("Hocam Bot Ayarları")),
       actions: [
-        const Spacer(),
         IconButton(
             tooltip: "Çık",
             onPressed: () {
@@ -20,8 +19,8 @@ class ConfigAIPopup extends StatelessWidget {
             icon: const Icon(Icons.exit_to_app_outlined))
       ],
       content: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.3,
-        width: MediaQuery.of(context).size.width * 0.8,
+        height: 500,
+        width: 1000,
         child: Scaffold(
           body: Column(
             children: [
@@ -53,40 +52,42 @@ class ConfigAIPopup extends StatelessWidget {
                 height: 4,
               ),
               DropdownMenu(
-                  onSelected: (temperature) {
-                    context.read<AppBloc>().add(AppAITemperatureSelected(
-                        temperature: temperature ??
-                            context.read<AppBloc>().state.temperature));
-                  },
-                  hintText:
-                      "Hocam Bot'un nasıl cevap vereceğini seçin, ne kadar yüksek seviyede ise o kadar tahmin edilemezleşir.",
-                  dropdownMenuEntries: const [
-                    DropdownMenuEntry(
-                      value: Temperature.direct,
-                      label: "Direkt (1)",
-                      leadingIcon: Icon(Icons.comments_disabled_outlined),
-                    ),
-                    DropdownMenuEntry(
-                      value: Temperature.normal,
-                      label: "Normal (2)",
-                      leadingIcon: Icon(Icons.mode_comment_outlined),
-                    ),
-                    DropdownMenuEntry(
-                      value: Temperature.high,
-                      label: "Yorumcu (3)",
-                      leadingIcon: Icon(Icons.add_comment_outlined),
-                    ),
-                    DropdownMenuEntry(
-                      value: Temperature.extreme,
-                      label: "Aşırı (4)",
-                      leadingIcon: Icon(Icons.comment),
-                    ),
-                    DropdownMenuEntry(
-                      value: Temperature.overkill,
-                      label: "Tahmin Edilemez (5)",
-                      leadingIcon: Icon(Icons.comment_bank_outlined),
-                    )
-                  ])
+                onSelected: (temperature) {
+                  context.read<AppBloc>().add(AppAITemperatureSelected(
+                      temperature: temperature ??
+                          context.read<AppBloc>().state.temperature));
+                },
+                hintText:
+                    "Hocam Bot'un nasıl cevap vereceğini seçin, ne kadar yüksek seviyede ise o kadar yorumcu davranır.",
+                dropdownMenuEntries: const [
+                  DropdownMenuEntry(
+                    value: Temperature.direct,
+                    label: "Direkt (1)",
+                    leadingIcon: Icon(Icons.comments_disabled_outlined),
+                  ),
+                  DropdownMenuEntry(
+                    value: Temperature.normal,
+                    label: "Normal (2)",
+                    leadingIcon: Icon(Icons.mode_comment_outlined),
+                  ),
+                  DropdownMenuEntry(
+                    value: Temperature.high,
+                    label: "Yorumcu (3)",
+                    leadingIcon: Icon(Icons.add_comment_outlined),
+                  ),
+                  DropdownMenuEntry(
+                    value: Temperature.extreme,
+                    label: "Aşırı Yorumcu (4)",
+                    leadingIcon: Icon(Icons.comment),
+                  ),
+                  DropdownMenuEntry(
+                    value: Temperature.overkill,
+                    label: "Tahmin Edilemez (5)",
+                    leadingIcon: Icon(Icons.comment_bank_outlined),
+                  )
+                ],
+              ),
+              const Spacer(),
             ],
           ),
         ),
