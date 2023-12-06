@@ -106,14 +106,16 @@ class AccountMenuPopup extends StatelessWidget {
                 height: 15,
               ),
               TextButton(
-                  onPressed: () {
-                    context.read<AppBloc>().add(AppAccountMenuPageChanged(
-                        accountMenu: AccountMenu.signup));
-                  },
-                  child: Text(
-                    "Hesabın yok mu? Hesap oluştur.",
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ))
+                onPressed: () {
+                  context.read<AppBloc>().add(AppAccountMenuPageChanged(
+                      accountMenu: AccountMenu.signup));
+                },
+                child: Text(
+                  "Hesabın yok mu? Hesap oluştur.",
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+              ),
+              const Spacer(),
             ],
           );
         } else {
@@ -170,14 +172,16 @@ class AccountMenuPopup extends StatelessWidget {
                 height: 15,
               ),
               TextButton(
-                  onPressed: () {
-                    context.read<AppBloc>().add(AppAccountMenuPageChanged(
-                        accountMenu: AccountMenu.login));
-                  },
-                  child: Text(
-                    "Zaten hesabın var mı? Giriş yap.",
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ))
+                onPressed: () {
+                  context.read<AppBloc>().add(AppAccountMenuPageChanged(
+                      accountMenu: AccountMenu.login));
+                },
+                child: Text(
+                  "Zaten hesabın var mı? Giriş yap.",
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+              ),
+              const Spacer(),
             ],
           );
         }

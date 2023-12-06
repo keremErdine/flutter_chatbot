@@ -11,7 +11,7 @@ class MainDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(child: BlocBuilder<AppBloc, AppState>(
       builder: (context, state) {
-        return ListView(children: [
+        return Column(children: [
           Row(
             children: [
               const Icon(Icons.smart_toy_outlined),
@@ -132,7 +132,6 @@ class MainDrawer extends StatelessWidget {
           const SizedBox(
             height: 5,
           ),
-          const Spacer(),
           if (!state.loggedIn)
             ElevatedButton.icon(
                 onPressed: () {
@@ -156,6 +155,7 @@ class MainDrawer extends StatelessWidget {
               label: Text("Merhaba ${state.userName}."),
               icon: const Icon(Icons.person),
             ),
+          const Spacer(),
         ]);
       },
     ));

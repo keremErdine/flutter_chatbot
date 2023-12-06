@@ -159,7 +159,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(state.copyWith(
       screen: screen,
     ));
-    addVectorsToStore();
+    //addVectorsToStore();
   }
 
   void appMessageAddedToFirestore(
