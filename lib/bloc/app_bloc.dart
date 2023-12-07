@@ -13,6 +13,7 @@ import 'package:langchain/langchain.dart' as lang_chain;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert' show utf8;
+import 'package:firebase_performance/firebase_performance.dart';
 
 part 'app_event.dart';
 part 'app_state.dart';
@@ -81,9 +82,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         }
       }
       try {
+        Trace aiResponseTrace =
+            FirebasePerformance.instance.newTrace('ai-response');
+        await aiResponseTrace.start();
         final response = await qaChain.call(
             'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this:  Student: ${event.message.context}\n You: ');
-
+        await aiResponseTrace.stop();
         add(AppMessageWritten(
             message: Message(
                 context: utf8.decode(utf8.encode(response['result'])),
