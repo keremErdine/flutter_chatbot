@@ -9,6 +9,7 @@ import 'package:flutter_chatbot/screens/loading/loading_screen.dart';
 import 'package:flutter_chatbot/screens/welcome/welcome_screen.dart';
 import 'package:flutter_chatbot/widgets/drawer.dart';
 import 'package:flutter_chatbot/screens/about/about_screen.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,8 @@ void main() async {
           appId: firebaseAppID,
           messagingSenderId: firebaseMessagingSenderID,
           projectId: firebaseProjectID));
+
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   runApp(const ChatbotApp());
 }
