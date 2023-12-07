@@ -19,8 +19,8 @@ class ConfigAIPopup extends StatelessWidget {
             icon: const Icon(Icons.exit_to_app_outlined))
       ],
       content: SizedBox(
-        height: 500,
-        width: 1000,
+        height: MediaQuery.of(context).size.height * 0.7,
+        width: MediaQuery.of(context).size.width * 0.75,
         child: Scaffold(
           body: Column(
             children: [

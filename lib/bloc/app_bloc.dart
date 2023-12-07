@@ -19,11 +19,8 @@ part 'app_event.dart';
 part 'app_state.dart';
 
 ChatOpenAI llm = ChatOpenAI(
-    apiKey: "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",
-    model: "gpt-3.5-turbo-1106",
-    temperature: 0.25);
-OpenAIEmbeddings embeddings = OpenAIEmbeddings(
-    apiKey: "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");
+    apiKey: openAIApiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
+OpenAIEmbeddings embeddings = OpenAIEmbeddings(apiKey: openAIApiKey);
 final Pinecone vectorStore = Pinecone(
     apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
 final lang_chain.RetrievalQAChain qaChain = lang_chain.RetrievalQAChain.fromLlm(
@@ -352,10 +349,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         await users.doc(state.credential!.user!.uid).get();
     final String userName = await userData.get("userName") as String;
     final List messages = await userData.get("messages") as List<dynamic>;
+    final String apiKey = await userData.get("apiKey") as String;
 
     final List senders = await userData.get("messageSenders") as List<dynamic>;
     final List<Message> decodedMessages = <Message>[];
-    final String apiKey = await userData.get("apiKey") as String;
 
     if (messages != []) {
       for (var message in messages) {
