@@ -17,7 +17,8 @@ class AppState {
       required this.currentAcountMenu,
       required this.credential,
       required this.loggedIn,
-      required this.userName});
+      required this.userName,
+      required this.tokensLeft});
 
   final List<Message> messages;
   final List<lang_chain.Document> documents;
@@ -28,6 +29,7 @@ class AppState {
   final AccountMenu currentAcountMenu;
   final bool loggedIn;
   final String userName;
+  final int tokensLeft;
   UserCredential? credential;
 
   factory AppState.initial() {
@@ -39,6 +41,7 @@ class AppState {
           ),
         ],
         documents: [],
+        tokensLeft: 0,
         generatingResponse: false,
         screen: Screen.loadingScreen,
         prefs: SharedPreferences.getInstance(),
@@ -59,7 +62,8 @@ class AppState {
       AccountMenu? currentAcountMenu,
       UserCredential? credential,
       bool? loggedIn,
-      String? userName}) {
+      String? userName,
+      int? tokensLeft}) {
     return AppState(
         messages: messages ?? this.messages,
         documents: documents ?? this.documents,
@@ -70,7 +74,8 @@ class AppState {
         currentAcountMenu: currentAcountMenu ?? this.currentAcountMenu,
         credential: credential ?? this.credential,
         loggedIn: loggedIn ?? this.loggedIn,
-        userName: userName ?? this.userName);
+        userName: userName ?? this.userName,
+        tokensLeft: tokensLeft ?? this.tokensLeft);
   }
 
   AppState addMessage(Message message) {
@@ -85,6 +90,7 @@ class AppState {
         currentAcountMenu: currentAcountMenu,
         credential: credential,
         loggedIn: loggedIn,
-        userName: userName);
+        userName: userName,
+        tokensLeft: tokensLeft);
   }
 }

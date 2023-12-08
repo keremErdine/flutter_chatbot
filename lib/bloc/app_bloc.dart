@@ -67,6 +67,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         }
       }
       try {
+        if (state.tokensLeft <= 0) {
+          add(AppMessageWritten(
+              message: Message(
+                  context:
+                      "Hocam\$'ların bitti. Lütfen daha fazla Hocam\$ alınız.",
+                  sender: Sender.system)));
+          return;
+        }
         Trace aiResponseTrace =
             FirebasePerformance.instance.newTrace('ai-response');
         await aiResponseTrace.start();
