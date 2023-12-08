@@ -18,20 +18,14 @@ import 'package:firebase_performance/firebase_performance.dart';
 part 'app_event.dart';
 part 'app_state.dart';
 
-ChatOpenAI llm = ChatOpenAI(
-    apiKey: openAIApiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
-OpenAIEmbeddings embeddings = OpenAIEmbeddings(apiKey: openAIApiKey);
+late ChatOpenAI llm;
+late OpenAIEmbeddings embeddings;
 final Pinecone vectorStore = Pinecone(
     apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
 final lang_chain.RetrievalQAChain qaChain = lang_chain.RetrievalQAChain.fromLlm(
     llm: llm,
     retriever: vectorStore.asRetriever(
         searchType: const lang_chain.VectorStoreSimilaritySearch()));
-
-const textSplitter = lang_chain.RecursiveCharacterTextSplitter(
-  chunkSize: 1000,
-  chunkOverlap: 200,
-);
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc() : super(AppState.initial()) {
@@ -93,9 +87,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         add(AppMessageWritten(
             message: Message(
                 context:
-                    "Hocam Bot bir yanıt oluştururken bir hata oluştu. Bu doğru bir OpenAI api anahtarı girmediğinizden kaynaklanıyor olabilir.",
+                    "Hocam Bot bir yanıt oluştururken bir hata oluştu. Oluşan hata: $e. Lütfen bu hatayı yapımcıya iletiniz.",
                 sender: Sender.system)));
-        print(e.toString());
       }
       add(AppAIFinishedGeneratingResponse());
     }
