@@ -13,6 +13,7 @@ import 'package:flutter_chatbot/screens/about/about_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 
+late String openAiApiKey;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -33,7 +34,7 @@ void main() async {
   );
   await remoteConfig.fetchAndActivate();
 
-  String openAiApiKey = remoteConfig.getString('openAiApiKey');
+  openAiApiKey = remoteConfig.getString('openAiApiKey');
 
   llm = ChatOpenAI(
       apiKey: openAiApiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);

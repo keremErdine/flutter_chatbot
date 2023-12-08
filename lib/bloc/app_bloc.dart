@@ -7,6 +7,7 @@ import 'package:flutter_chatbot/api_key.dart';
 import 'package:flutter_chatbot/classes/message.dart';
 // ignore: unused_import
 import 'package:flutter_chatbot/debug_tool.dart';
+import 'package:flutter_chatbot/main.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_pinecone/langchain_pinecone.dart';
 import 'package:langchain/langchain.dart' as lang_chain;
@@ -185,14 +186,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       users.doc(uid).set({"messages": messages, "messageSenders": senders},
           SetOptions(merge: true));
     } catch (e) {
-      print(e);
+      add(AppMessageWritten(
+          message: Message(
+              context:
+                  "Bir hata oluştu: $e. Lütfen bu hatayı yapımcıya iletin.",
+              sender: Sender.system)));
     }
   }
 
   void appApiKeyEntered(AppApiKeyEntered event, Emitter emit) async {
-    //llm = ChatOpenAI(apiKey: event.apiKey, model: "gpt-3.5-turbo-1106");
-    //embeddings = OpenAIEmbeddings(apiKey: event.apiKey);
-    emit(state.copyWith(apiKey: event.apiKey));
     final CollectionReference users =
         FirebaseFirestore.instance.collection("Users");
     final String uid = state.credential!.user!.uid;
@@ -224,7 +226,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
 
     llm = ChatOpenAI(
-        apiKey: state.apiKey,
+        apiKey: openAiApiKey,
         model: "gpt-3.5-turbo-1106",
         temperature: temperature);
     emit(state.copyWith(temperature: event.temperature));
@@ -377,7 +379,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appUserLoggedOut(AppUserLoggedOut event, Emitter emit) async {
     emit(state.copyWith(
         messages: <Message>[],
-        apiKey: "",
         temperature: Temperature.normal,
         loggedIn: false,
         credential: null,

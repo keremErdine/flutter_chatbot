@@ -13,7 +13,6 @@ class AppState {
       required this.generatingResponse,
       required this.screen,
       required this.prefs,
-      required this.apiKey,
       required this.temperature,
       required this.currentAcountMenu,
       required this.credential,
@@ -24,7 +23,6 @@ class AppState {
   final List<lang_chain.Document> documents;
   final bool generatingResponse;
   final Screen screen;
-  final String apiKey;
   final Temperature temperature;
   final Future<SharedPreferences> prefs;
   final AccountMenu currentAcountMenu;
@@ -44,7 +42,6 @@ class AppState {
         generatingResponse: false,
         screen: Screen.loadingScreen,
         prefs: SharedPreferences.getInstance(),
-        apiKey: "",
         temperature: Temperature.normal,
         currentAcountMenu: AccountMenu.login,
         credential: null,
@@ -58,7 +55,6 @@ class AppState {
       bool? generatingResponse,
       Screen? screen,
       bool? appStartup,
-      String? apiKey,
       Temperature? temperature,
       AccountMenu? currentAcountMenu,
       UserCredential? credential,
@@ -70,7 +66,6 @@ class AppState {
         generatingResponse: generatingResponse ?? this.generatingResponse,
         screen: screen ?? this.screen,
         prefs: prefs,
-        apiKey: apiKey ?? this.apiKey,
         temperature: temperature ?? this.temperature,
         currentAcountMenu: currentAcountMenu ?? this.currentAcountMenu,
         credential: credential ?? this.credential,
@@ -86,7 +81,6 @@ class AppState {
         generatingResponse: generatingResponse,
         screen: screen,
         prefs: prefs,
-        apiKey: apiKey,
         temperature: temperature,
         currentAcountMenu: currentAcountMenu,
         credential: credential,
