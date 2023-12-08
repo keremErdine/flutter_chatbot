@@ -7,7 +7,6 @@ class ConfigAIPopup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController apiKeyController = TextEditingController();
     return AlertDialog(
       title: const Center(child: Text("Hocam Bot Ayarları")),
       actions: [
@@ -24,30 +23,6 @@ class ConfigAIPopup extends StatelessWidget {
         child: Scaffold(
           body: Column(
             children: [
-              const SizedBox(
-                height: 10,
-              ),
-              Center(
-                child: Container(
-                  decoration: BoxDecoration(border: Border.all()),
-                  height: 30,
-                  width: MediaQuery.of(context).size.width * 0.45,
-                  child: TextField(
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                        hintText: "OpenAI API anahtarınızı giriniz."),
-                    textAlign: TextAlign.center,
-                    controller: apiKeyController,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    onSubmitted: (apiKey) {
-                      context
-                          .read<AppBloc>()
-                          .add(AppApiKeyEntered(apiKey: apiKey));
-                    },
-                  ),
-                ),
-              ),
               const SizedBox(
                 height: 4,
               ),

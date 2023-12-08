@@ -27,12 +27,14 @@ void main() async {
   final remoteConfig = FirebaseRemoteConfig.instance;
   await remoteConfig.setConfigSettings(
     RemoteConfigSettings(
-      fetchTimeout: const Duration(minutes: 1),
+      fetchTimeout: const Duration(minutes: 5),
       minimumFetchInterval: const Duration(hours: 1),
     ),
   );
+  await remoteConfig.fetchAndActivate();
 
-  String openAiApiKey = remoteConfig.getString("openAiApiKey");
+  String openAiApiKey = remoteConfig.getString('openAiApiKey');
+
   llm = ChatOpenAI(
       apiKey: openAiApiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
   embeddings = OpenAIEmbeddings(apiKey: openAiApiKey);

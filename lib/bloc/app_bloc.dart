@@ -12,7 +12,6 @@ import 'package:langchain_pinecone/langchain_pinecone.dart';
 import 'package:langchain/langchain.dart' as lang_chain;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:convert' show utf8;
 import 'package:firebase_performance/firebase_performance.dart';
 
 part 'app_event.dart';
@@ -56,13 +55,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       return;
     }
     add(AppMessageAddedToFirestore());
-    if (state.apiKey.isEmpty && event.message.sender != Sender.system) {
-      add(AppMessageWritten(
-          message: Message(
-              context:
-                  "Bir OpenAI api anahtarı girmediğinizden dolayı uygulamayı kullanamazsınız. Lütfen bir OpenAI api anahtarı girip tekrar deneyiniz.",
-              sender: Sender.system)));
-    } else if (event.message.sender == Sender.user) {
+    if (event.message.sender == Sender.user) {
       add(AppAIStartedGeneratingResponse());
       String conversation = "";
       for (var message in state.messages) {
@@ -81,7 +74,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         await aiResponseTrace.stop();
         add(AppMessageWritten(
             message: Message(
-                context: utf8.decode(utf8.encode(response['result'])),
+                context: _convertToUtf8(response['result']),
                 sender: Sender.bot)));
       } catch (e) {
         add(AppMessageWritten(
@@ -92,6 +85,19 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       }
       add(AppAIFinishedGeneratingResponse());
     }
+  }
+
+  String _convertToUtf8(String string) {
+    print(string);
+    string = string.replaceAll("Ä±", "ı");
+    string = string.replaceAll("Ä°", "İ");
+    string = string.replaceAll("Ã¶", "ö");
+    string = string.replaceAll("Å", "ş");
+    string = string.replaceAll("Ã", "Ö");
+    string = string.replaceAll("Ã¼", "ü");
+    string = string.replaceAll("Ä", "ğ");
+    string = string.replaceAll("Ã§", "ç");
+    return string;
   }
 
   void appAIStartedGeneratingResponse(
@@ -184,8 +190,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void appApiKeyEntered(AppApiKeyEntered event, Emitter emit) async {
-    llm = ChatOpenAI(apiKey: event.apiKey, model: "gpt-3.5-turbo-1106");
-    embeddings = OpenAIEmbeddings(apiKey: event.apiKey);
+    //llm = ChatOpenAI(apiKey: event.apiKey, model: "gpt-3.5-turbo-1106");
+    //embeddings = OpenAIEmbeddings(apiKey: event.apiKey);
     emit(state.copyWith(apiKey: event.apiKey));
     final CollectionReference users =
         FirebaseFirestore.instance.collection("Users");
@@ -317,7 +323,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       "messages": state.messages.map(
         (message) => message.context,
       ),
-      "apiKey": "",
       "messageSenders": state.messages.map(
         (message) {
           if (message.sender == Sender.bot) {
@@ -342,7 +347,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         await users.doc(state.credential!.user!.uid).get();
     final String userName = await userData.get("userName") as String;
     final List messages = await userData.get("messages") as List<dynamic>;
-    final String apiKey = await userData.get("apiKey") as String;
 
     final List senders = await userData.get("messageSenders") as List<dynamic>;
     final List<Message> decodedMessages = <Message>[];
@@ -362,35 +366,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       }
     }
 
-    final String temperatureValue = await userData.get("temperature") as String;
-    double temperature = 0.25;
-    switch (temperatureValue) {
-      case "direct":
-        temperature = 0;
-        break;
-      case "high":
-        temperature = 0.5;
-        break;
-      case "extreme":
-        temperature = 0.75;
-        break;
-      case "overkill":
-        temperature = 1;
-        break;
-      default:
-        temperature = 0.25;
-    }
-
-    if (apiKey.isNotEmpty) {
-      llm = ChatOpenAI(
-          apiKey: apiKey,
-          model: "gpt-3.5-turbo-1106",
-          temperature: temperature);
-      embeddings = OpenAIEmbeddings(apiKey: apiKey);
-    }
-
-    emit(state.copyWith(
-        messages: decodedMessages, apiKey: apiKey, userName: userName));
+    emit(state.copyWith(messages: decodedMessages, userName: userName));
   }
 
   void appAccountMenuPageChanged(
