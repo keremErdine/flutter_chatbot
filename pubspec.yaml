@@ -52,6 +52,7 @@ dependencies:
   firebase_performance: ^0.9.3+7
   firebase_remote_config: ^4.3.8
   firebase_analytics: ^10.7.4
+  flutter_gpt_tokenizer: ^0.1.0
 
 
 

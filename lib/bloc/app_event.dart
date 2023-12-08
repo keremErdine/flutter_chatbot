@@ -24,9 +24,9 @@ class AppChatHistoryCleared extends AppEvent {}
 @immutable
 class AppDataFromPrefsRead extends AppEvent {}
 
+@immutable
 class AppMessageAddedToFirestore extends AppEvent {
-  AppMessageAddedToFirestore({this.tokenCost});
-  int? tokenCost;
+  AppMessageAddedToFirestore();
 }
 
 class AppApiKeyEntered extends AppEvent {

@@ -8,6 +8,7 @@ import 'package:flutter_chatbot/classes/message.dart';
 // ignore: unused_import
 import 'package:flutter_chatbot/debug_tool.dart';
 import 'package:flutter_chatbot/main.dart';
+import 'package:flutter_gpt_tokenizer/flutter_gpt_tokenizer.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_pinecone/langchain_pinecone.dart';
 import 'package:langchain/langchain.dart' as lang_chain;
@@ -75,16 +76,21 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                   sender: Sender.system)));
           return;
         }
+        String promt =
+            'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The question is: ${event.message.context}';
         Trace aiResponseTrace =
             FirebasePerformance.instance.newTrace('ai-response');
         await aiResponseTrace.start();
-        final response = await qaChain.call(
-            'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this:  Student: ${event.message.context}\n You: ');
+        final response = await qaChain.call(promt);
         await aiResponseTrace.stop();
         add(AppMessageWritten(
             message: Message(
                 context: _convertToUtf8(response['result']),
                 sender: Sender.bot)));
+        int tokenCost =
+            await Tokenizer().count(promt, modelName: "gpt-3.5-turbo-1106");
+        tokenCost += await Tokenizer()
+            .count(response['result'], modelName: "gpt-3.5-turbo-1106");
       } catch (e) {
         add(AppMessageWritten(
             message: Message(
@@ -344,7 +350,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           }
         },
       ),
-      "temperature": "normal"
+      "temperature": "normal",
+      "tokensLeft": 100
     }).then((value) {
       print("New user sucesfully created");
     });
@@ -360,6 +367,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     final List senders = await userData.get("messageSenders") as List<dynamic>;
     final List<Message> decodedMessages = <Message>[];
+    final int tokensLeft = await userData.get("tokensLeft");
 
     if (messages != []) {
       for (var message in messages) {
@@ -376,7 +384,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       }
     }
 
-    emit(state.copyWith(messages: decodedMessages, userName: userName));
+    emit(state.copyWith(
+        messages: decodedMessages, userName: userName, tokensLeft: tokensLeft));
   }
 
   void appAccountMenuPageChanged(
