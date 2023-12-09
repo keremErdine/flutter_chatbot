@@ -1,6 +1,8 @@
 part of 'app_bloc.dart';
 
-class AppEvent {}
+class AppEvent {
+  const AppEvent();
+}
 
 class AppMessageWritten extends AppEvent {
   AppMessageWritten({required this.message});
@@ -26,7 +28,7 @@ class AppDataFromPrefsRead extends AppEvent {}
 
 @immutable
 class AppMessageAddedToFirestore extends AppEvent {
-  AppMessageAddedToFirestore();
+  const AppMessageAddedToFirestore();
 }
 
 class AppApiKeyEntered extends AppEvent {
@@ -54,7 +56,7 @@ class AppUserSignedUp extends AppEvent {
 }
 
 class AppAccountMenuPageChanged extends AppEvent {
-  AppAccountMenuPageChanged({required this.accountMenu});
+  const AppAccountMenuPageChanged({required this.accountMenu});
   final AccountMenu accountMenu;
 }
 
@@ -63,3 +65,8 @@ class AppFirebaseDataRead extends AppEvent {}
 
 @immutable
 class AppUserLoggedOut extends AppEvent {}
+
+class AppCreditsConsumed extends AppEvent {
+  const AppCreditsConsumed({required this.text});
+  final String text;
+}

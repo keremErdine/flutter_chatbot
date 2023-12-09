@@ -43,6 +43,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppAccountMenuPageChanged>(appAccountMenuPageChanged);
     on<AppFirebaseDataRead>(appFirebaseDataRead);
     on<AppUserLoggedOut>(appUserLoggedOut);
+    on<AppCreditsConsumed>(appCreditsConsumed);
   }
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
@@ -55,7 +56,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
               sender: Sender.system)));
       return;
     }
-    add(AppMessageAddedToFirestore());
+    add(const AppMessageAddedToFirestore());
     if (event.message.sender == Sender.user) {
       add(AppAIStartedGeneratingResponse());
       String conversation = "";
@@ -75,17 +76,18 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                   sender: Sender.system)));
           return;
         }
-        String promt =
+        String prompt =
             'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this $conversation Student:${event.message.context} You:';
         Trace aiResponseTrace =
             FirebasePerformance.instance.newTrace('ai-response');
         await aiResponseTrace.start();
-        final response = await qaChain.call(promt);
+        final response = await qaChain.call(prompt);
         await aiResponseTrace.stop();
         add(AppMessageWritten(
             message: Message(
                 context: _convertToUtf8(response['result']),
                 sender: Sender.bot)));
+        add(AppCreditsConsumed(text: prompt + response['result']));
       } catch (e) {
         add(AppMessageWritten(
             message: Message(
@@ -166,9 +168,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         screen = Screen.welcomeScreen;
         await prefs.setString("screen", "welcome");
     }
+
     emit(state.copyWith(
       screen: screen,
     ));
+    print("Done reading prefs");
     //addVectorsToStore();
   }
 
@@ -278,11 +282,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                 context:
                     "Bu e-postayı kullanan bir kullanıcı bulunamadı. Hesap mı açmak istemiştiniz?",
                 sender: Sender.system)));
+        return;
       } else if (e.code == 'invalid-login-credentials') {
         add(AppMessageWritten(
             message: Message(
                 context: "Bu parola bu kullanıcı için yanlış. Yine deneyiniz.",
                 sender: Sender.system)));
+        return;
       } else {
         add(AppMessageWritten(
             message: Message(context: e.code, sender: Sender.system)));
@@ -313,13 +319,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                 context:
                     "Girdiğiniz e-posta zaten kullanılıyor. Yine deneyiniz.",
                 sender: Sender.system)));
+        emit(state.copyWith(screen: Screen.welcomeScreen));
+        return;
       }
     } catch (e) {
       add(AppMessageWritten(
           message: Message(
               context: "Başka bir hata oluştu. Yine deneyiniz.",
               sender: Sender.system)));
-      print(e);
+      emit(state.copyWith(screen: Screen.welcomeScreen));
+      return;
     }
     emit(state.copyWith(credential: credential));
     add(AppFirebaseDataRead());
@@ -346,7 +355,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         },
       ),
       "temperature": "normal",
-      "credits": 100
+      "credits": 5000
     }).then((value) {
       print("New user sucesfully created");
     });
@@ -402,5 +411,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     SharedPreferences prefs = await state.prefs;
     await prefs.setString("email", "");
     await prefs.setString("password", "");
+  }
+
+  void appCreditsConsumed(AppCreditsConsumed event, Emitter emit) async {
+    final int creditCost = event.text.length ~/ 3;
+    emit(state.copyWith(credits: state.credits - creditCost));
+    final CollectionReference users =
+        FirebaseFirestore.instance.collection("Users");
+    await users
+        .doc(state.credential!.user!.uid)
+        .set({"credits": state.credits}, SetOptions(merge: true));
   }
 }

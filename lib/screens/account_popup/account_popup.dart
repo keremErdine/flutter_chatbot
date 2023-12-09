@@ -52,8 +52,8 @@ class AccountMenuPopup extends StatelessWidget {
         ),
         TextButton(
             onPressed: () {
-              context.read<AppBloc>().add(
-                  AppAccountMenuPageChanged(accountMenu: AccountMenu.signup));
+              context.read<AppBloc>().add(const AppAccountMenuPageChanged(
+                  accountMenu: AccountMenu.signup));
             },
             child: Text(
               "Hesabın yok mu? Hesap oluştur.",
@@ -107,7 +107,7 @@ class AccountMenuPopup extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  context.read<AppBloc>().add(AppAccountMenuPageChanged(
+                  context.read<AppBloc>().add(const AppAccountMenuPageChanged(
                       accountMenu: AccountMenu.signup));
                 },
                 child: Text(
@@ -173,7 +173,7 @@ class AccountMenuPopup extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  context.read<AppBloc>().add(AppAccountMenuPageChanged(
+                  context.read<AppBloc>().add(const AppAccountMenuPageChanged(
                       accountMenu: AccountMenu.login));
                 },
                 child: Text(

@@ -15,6 +15,7 @@ import 'package:langchain_openai/langchain_openai.dart';
 
 late String openAiApiKey;
 void main() async {
+  print("App Started");
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
@@ -39,6 +40,7 @@ void main() async {
   llm = ChatOpenAI(
       apiKey: openAiApiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
   embeddings = OpenAIEmbeddings(apiKey: openAiApiKey);
+  print("runApp initiated");
   runApp(const ChatbotApp());
 }
 
@@ -74,6 +76,13 @@ class ChatbotApp extends StatelessWidget {
                 appBar: AppBar(
                   title: const Text('Hocam Bot'),
                   actions: [
+                    Text(
+                      "${state.credits} Hocam\$",
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
                     if (state.screen == Screen.chatScreen)
                       IconButton(
                         onPressed: () {
