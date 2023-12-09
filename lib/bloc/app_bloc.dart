@@ -3,7 +3,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chatbot/api_key.dart';
 import 'package:flutter_chatbot/classes/message.dart';
 // ignore: unused_import
 import 'package:flutter_chatbot/debug_tool.dart';
@@ -20,12 +19,8 @@ part 'app_state.dart';
 
 late ChatOpenAI llm;
 late OpenAIEmbeddings embeddings;
-final Pinecone vectorStore = Pinecone(
-    apiKey: pineconeApiKey, indexName: indexName, embeddings: embeddings);
-final lang_chain.RetrievalQAChain qaChain = lang_chain.RetrievalQAChain.fromLlm(
-    llm: llm,
-    retriever: vectorStore.asRetriever(
-        searchType: const lang_chain.VectorStoreSimilaritySearch()));
+late Pinecone vectorStore;
+late lang_chain.RetrievalQAChain qaChain;
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc() : super(AppState.initial()) {
@@ -109,6 +104,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     string = string.replaceAll("Ã¼", "ü");
     string = string.replaceAll("Ä", "ğ");
     string = string.replaceAll("Ã§", "ç");
+    string = string.replaceAll("â", "'");
+    string = string.replaceAll("Ã¢", "a");
+    string = string.replaceAll("Å", "Ş");
     return string;
   }
 

@@ -11,11 +11,13 @@ import 'package:flutter_chatbot/screens/welcome/welcome_screen.dart';
 import 'package:flutter_chatbot/widgets/drawer.dart';
 import 'package:flutter_chatbot/screens/about/about_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
+import 'package:langchain_pinecone/langchain_pinecone.dart';
 
 late String openAiApiKey;
+
 void main() async {
-  print("App Started");
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
@@ -36,11 +38,22 @@ void main() async {
   await remoteConfig.fetchAndActivate();
 
   openAiApiKey = remoteConfig.getString('openAiApiKey');
-
+  final String pineconeApiKey = remoteConfig.getString("pineconeApiKey");
+  final String pineconeEnvironment =
+      remoteConfig.getString("pineconeEnvironment");
+  final String pineconeIndexName = remoteConfig.getString("pineconeIndexName");
+  vectorStore = Pinecone(
+      apiKey: pineconeApiKey,
+      indexName: pineconeIndexName,
+      embeddings: embeddings,
+      environment: pineconeEnvironment);
+  qaChain = RetrievalQAChain.fromLlm(
+      llm: llm,
+      retriever: vectorStore.asRetriever(
+          searchType: const VectorStoreSimilaritySearch()));
   llm = ChatOpenAI(
       apiKey: openAiApiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
   embeddings = OpenAIEmbeddings(apiKey: openAiApiKey);
-  print("runApp initiated");
   runApp(const ChatbotApp());
 }
 
