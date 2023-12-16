@@ -42,6 +42,9 @@ void main() async {
   final String pineconeEnvironment =
       remoteConfig.getString("pineconeEnvironment");
   final String pineconeIndexName = remoteConfig.getString("pineconeIndexName");
+  embeddings = OpenAIEmbeddings(apiKey: openAiApiKey);
+  llm = ChatOpenAI(
+      apiKey: openAiApiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
   vectorStore = Pinecone(
       apiKey: pineconeApiKey,
       indexName: pineconeIndexName,
@@ -51,9 +54,7 @@ void main() async {
       llm: llm,
       retriever: vectorStore.asRetriever(
           searchType: const VectorStoreSimilaritySearch()));
-  llm = ChatOpenAI(
-      apiKey: openAiApiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
-  embeddings = OpenAIEmbeddings(apiKey: openAiApiKey);
+
   runApp(const ChatbotApp());
 }
 

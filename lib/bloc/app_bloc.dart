@@ -69,6 +69,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                   context:
                       "Hocam\$'ların bitti. Lütfen daha fazla Hocam\$ alınız.",
                   sender: Sender.system)));
+          add(AppAIFinishedGeneratingResponse());
           return;
         }
         String prompt =
@@ -107,6 +108,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     string = string.replaceAll("â", "'");
     string = string.replaceAll("Ã¢", "a");
     string = string.replaceAll("Å", "Ş");
+    string = string.replaceAll("Ã", "Ç");
     return string;
   }
 
@@ -147,12 +149,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     String? email = prefs.getString("email");
     String? password = prefs.getString("password");
-    if (email != null &&
+    /*  if (email != null &&
         password != null &&
         email.isNotEmpty &&
         password.isNotEmpty) {
       add(AppUserLoggedIn(email: email, password: password));
-    }
+    }*/
 
     Screen screen = Screen.loadingScreen;
     switch (prefs.getString("screen")) {
@@ -263,16 +265,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appUserLoggedIn(AppUserLoggedIn event, Emitter emit) async {
     try {
-      await FirebaseAuth.instance
+      UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
-              email: event.email, password: event.password)
-          .then((value) async {
-        emit(state.copyWith(credential: value, loggedIn: true));
-        add(AppFirebaseDataRead());
-        final SharedPreferences prefs = await state.prefs;
-        prefs.setString("email", event.email);
-        prefs.setString("password", event.password);
-      });
+              email: event.email, password: event.password);
+
+      print("credential: $credential");
+      add(AppFirebaseDataRead(credential: credential));
+
+      final SharedPreferences prefs = await state.prefs;
+      prefs.setString("email", event.email);
+      prefs.setString("password", event.password);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         add(AppMessageWritten(
@@ -290,8 +292,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       } else {
         add(AppMessageWritten(
             message: Message(context: e.code, sender: Sender.system)));
+        print(e);
+        return;
       }
     }
+    emit(state.copyWith(screen: Screen.chatScreen));
+    return;
   }
 
   void appUserSignedUp(AppUserSignedUp event, Emitter emit) async {
@@ -302,6 +308,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         password: event.password,
       );
       _userSetup(uid: credential.user!.uid, userName: event.userName);
+      add(AppFirebaseDataRead(credential: credential));
       final SharedPreferences prefs = await state.prefs;
       prefs.setString("email", event.email);
       prefs.setString("password", event.password);
@@ -328,8 +335,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       emit(state.copyWith(screen: Screen.welcomeScreen));
       return;
     }
-    emit(state.copyWith(credential: credential));
-    add(AppFirebaseDataRead());
   }
 
   void _userSetup({required String uid, required String userName}) async {
@@ -362,14 +367,22 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appFirebaseDataRead(AppFirebaseDataRead event, Emitter emit) async {
     final CollectionReference users =
         FirebaseFirestore.instance.collection("Users");
-    final DocumentSnapshot userData =
-        await users.doc(state.credential!.user!.uid).get();
+    late DocumentSnapshot userData;
+    if (state.loggedIn == false) {
+      await users
+          .doc(event.credential.user!.uid)
+          .get(const GetOptions(source: Source.server))
+          .then((value) => userData = value);
+    }
+
+    print("userData: ${userData.data().toString()}");
     final String userName = await userData.get("userName") as String;
+    print(userName);
     final List messages = await userData.get("messages") as List<dynamic>;
 
     final List senders = await userData.get("messageSenders") as List<dynamic>;
     final List<Message> decodedMessages = <Message>[];
-    final int tokensLeft = await userData.get("credits");
+    final int credits = await userData.get("credits");
 
     if (messages != []) {
       for (var message in messages) {
@@ -385,9 +398,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         ));
       }
     }
-
+    add(AppScreenChanged(screen: Screen.chatScreen));
     emit(state.copyWith(
-        messages: decodedMessages, userName: userName, credits: tokensLeft));
+        messages: decodedMessages,
+        userName: userName,
+        credits: credits,
+        credential: event.credential,
+        loggedIn: true));
   }
 
   void appAccountMenuPageChanged(

@@ -93,7 +93,6 @@ class AccountMenuPopup extends StatelessWidget {
               ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    Navigator.of(context).pop();
                     context.read<AppBloc>().add(AppUserLoggedIn(
                         email: emailController.value.text,
                         password: passwordController.value.text));
@@ -157,7 +156,6 @@ class AccountMenuPopup extends StatelessWidget {
               ),
               ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
                     Navigator.of(context).pop();
                     context.read<AppBloc>().add(AppUserSignedUp(
                         userName: userNameController.value.text,

@@ -60,8 +60,10 @@ class AppAccountMenuPageChanged extends AppEvent {
   final AccountMenu accountMenu;
 }
 
-@immutable
-class AppFirebaseDataRead extends AppEvent {}
+class AppFirebaseDataRead extends AppEvent {
+  const AppFirebaseDataRead({required this.credential});
+  final UserCredential credential;
+}
 
 @immutable
 class AppUserLoggedOut extends AppEvent {}

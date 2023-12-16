@@ -6,6 +6,8 @@ enum Temperature { direct, normal, high, extreme, overkill }
 
 enum AccountMenu { login, signup }
 
+enum AccountLevel { free, associate, professor }
+
 class AppState {
   AppState(
       {required this.messages,
@@ -18,7 +20,8 @@ class AppState {
       required this.credential,
       required this.loggedIn,
       required this.userName,
-      required this.credits});
+      required this.credits,
+      required this.accountLevel});
 
   final List<Message> messages;
   final List<lang_chain.Document> documents;
@@ -30,6 +33,7 @@ class AppState {
   final bool loggedIn;
   final String userName;
   final int credits;
+  final AccountLevel accountLevel;
   UserCredential? credential;
 
   factory AppState.initial() {
@@ -49,7 +53,8 @@ class AppState {
         currentAcountMenu: AccountMenu.login,
         credential: null,
         loggedIn: false,
-        userName: "");
+        userName: "",
+        accountLevel: AccountLevel.free);
   }
 
   AppState copyWith(
@@ -63,7 +68,8 @@ class AppState {
       UserCredential? credential,
       bool? loggedIn,
       String? userName,
-      int? credits}) {
+      int? credits,
+      AccountLevel? accountLevel}) {
     return AppState(
         messages: messages ?? this.messages,
         documents: documents ?? this.documents,
@@ -75,7 +81,8 @@ class AppState {
         credential: credential ?? this.credential,
         loggedIn: loggedIn ?? this.loggedIn,
         userName: userName ?? this.userName,
-        credits: credits ?? this.credits);
+        credits: credits ?? this.credits,
+        accountLevel: accountLevel ?? this.accountLevel);
   }
 
   AppState addMessage(Message message) {
@@ -91,6 +98,7 @@ class AppState {
         credential: credential,
         loggedIn: loggedIn,
         userName: userName,
-        credits: credits);
+        credits: credits,
+        accountLevel: accountLevel);
   }
 }
