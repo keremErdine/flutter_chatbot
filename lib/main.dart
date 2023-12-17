@@ -88,7 +88,24 @@ class ChatbotApp extends StatelessWidget {
           builder: (context, state) {
             return Scaffold(
                 appBar: AppBar(
-                  title: const Text('Hocam Bot'),
+                  title: Row(
+                    children: [
+                      const Text('Hocam Bot'),
+                      if (state.accountLevel == AccountLevel.associate)
+                        SizedBox(
+                            height: 50,
+                            width: 150,
+                            child: Image.asset(
+                              "assets/account_level_icons/associate.png",
+                            ))
+                      else if (state.accountLevel == AccountLevel.proffessor)
+                        SizedBox(
+                            height: 60,
+                            width: 150,
+                            child: Image.asset(
+                                "assets/account_level_icons/proffesor.png"))
+                    ],
+                  ),
                   actions: [
                     Text(
                       "${state.credits} Hocam\$",

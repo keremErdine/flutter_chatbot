@@ -39,6 +39,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppFirebaseDataRead>(appFirebaseDataRead);
     on<AppUserLoggedOut>(appUserLoggedOut);
     on<AppCreditsConsumed>(appCreditsConsumed);
+    on<AppShopMenuChanged>(appShopMenuChanged);
   }
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
@@ -358,7 +359,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         },
       ),
       "temperature": "normal",
-      "credits": 5000
+      "credits": 5000,
+      "accountLevel": "free"
     }).then((value) {
       print("New user sucesfully created");
     });
@@ -375,14 +377,20 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           .then((value) => userData = value);
     }
 
-    print("userData: ${userData.data().toString()}");
     final String userName = await userData.get("userName") as String;
-    print(userName);
+    final String accountLevel = await userData.get("accountLevel") as String;
     final List messages = await userData.get("messages") as List<dynamic>;
 
     final List senders = await userData.get("messageSenders") as List<dynamic>;
     final List<Message> decodedMessages = <Message>[];
     final int credits = await userData.get("credits");
+
+    AccountLevel decodedAccountLevel = AccountLevel.free;
+    if (accountLevel == "associate") {
+      decodedAccountLevel = AccountLevel.associate;
+    } else if (accountLevel == "proffessor") {
+      decodedAccountLevel = AccountLevel.proffessor;
+    }
 
     if (messages != []) {
       for (var message in messages) {
@@ -398,13 +406,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         ));
       }
     }
-    add(AppScreenChanged(screen: Screen.chatScreen));
+    add(const AppScreenChanged(screen: Screen.chatScreen));
     emit(state.copyWith(
         messages: decodedMessages,
         userName: userName,
         credits: credits,
         credential: event.credential,
-        loggedIn: true));
+        loggedIn: true,
+        accountLevel: decodedAccountLevel));
   }
 
   void appAccountMenuPageChanged(
@@ -419,7 +428,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         loggedIn: false,
         credential: null,
         userName: "",
-        currentAcountMenu: AccountMenu.login));
+        currentAcountMenu: AccountMenu.login,
+        accountLevel: AccountLevel.free));
     add(AppMessageWritten(
         message:
             Message(context: "Hesabından çıktın.", sender: Sender.system)));
@@ -436,5 +446,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     await users
         .doc(state.credential!.user!.uid)
         .set({"credits": state.credits}, SetOptions(merge: true));
+  }
+
+  void appShopMenuChanged(AppShopMenuChanged event, Emitter emit) {
+    emit(state.copyWith(currentShopMenu: event.menu));
   }
 }

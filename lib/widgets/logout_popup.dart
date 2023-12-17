@@ -12,7 +12,7 @@ class LogoutPopup extends StatelessWidget {
         ElevatedButton.icon(
             onPressed: () {
               Navigator.of(context).pop();
-              context.read<AppBloc>().add(AppUserLoggedOut());
+              context.read<AppBloc>().add(const AppUserLoggedOut());
             },
             icon: const Icon(Icons.exit_to_app_outlined),
             label: Text("Çıkış Yap",

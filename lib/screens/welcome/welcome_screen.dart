@@ -31,7 +31,7 @@ class WelcomeScreen extends StatelessWidget {
                 );
                 context
                     .read<AppBloc>()
-                    .add(AppScreenChanged(screen: Screen.chatScreen));
+                    .add(const AppScreenChanged(screen: Screen.chatScreen));
               },
               child: Text(
                 "Şimdi Başla",

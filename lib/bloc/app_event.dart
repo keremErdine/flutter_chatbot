@@ -16,7 +16,7 @@ class AppAIStartedGeneratingResponse extends AppEvent {}
 class AppAIFinishedGeneratingResponse extends AppEvent {}
 
 class AppScreenChanged extends AppEvent {
-  AppScreenChanged({required this.screen});
+  const AppScreenChanged({required this.screen});
   final Screen screen;
 }
 
@@ -32,17 +32,17 @@ class AppMessageAddedToFirestore extends AppEvent {
 }
 
 class AppApiKeyEntered extends AppEvent {
-  AppApiKeyEntered({required this.apiKey});
+  const AppApiKeyEntered({required this.apiKey});
   final String apiKey;
 }
 
 class AppAITemperatureSelected extends AppEvent {
-  AppAITemperatureSelected({required this.temperature});
+  const AppAITemperatureSelected({required this.temperature});
   final Temperature temperature;
 }
 
 class AppUserLoggedIn extends AppEvent {
-  AppUserLoggedIn({required this.email, required this.password});
+  const AppUserLoggedIn({required this.email, required this.password});
   final String email;
   final String password;
 }
@@ -66,9 +66,16 @@ class AppFirebaseDataRead extends AppEvent {
 }
 
 @immutable
-class AppUserLoggedOut extends AppEvent {}
+class AppUserLoggedOut extends AppEvent {
+  const AppUserLoggedOut();
+}
 
 class AppCreditsConsumed extends AppEvent {
   const AppCreditsConsumed({required this.text});
   final String text;
+}
+
+class AppShopMenuChanged extends AppEvent {
+  const AppShopMenuChanged({required this.menu});
+  final ShopMenu menu;
 }

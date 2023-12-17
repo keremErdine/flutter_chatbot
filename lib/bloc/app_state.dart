@@ -6,7 +6,9 @@ enum Temperature { direct, normal, high, extreme, overkill }
 
 enum AccountMenu { login, signup }
 
-enum AccountLevel { free, associate, professor }
+enum AccountLevel { free, associate, proffessor }
+
+enum ShopMenu { credits, levels }
 
 class AppState {
   AppState(
@@ -21,7 +23,8 @@ class AppState {
       required this.loggedIn,
       required this.userName,
       required this.credits,
-      required this.accountLevel});
+      required this.accountLevel,
+      required this.currentShopMenu});
 
   final List<Message> messages;
   final List<lang_chain.Document> documents;
@@ -34,6 +37,7 @@ class AppState {
   final String userName;
   final int credits;
   final AccountLevel accountLevel;
+  final ShopMenu currentShopMenu;
   UserCredential? credential;
 
   factory AppState.initial() {
@@ -54,7 +58,8 @@ class AppState {
         credential: null,
         loggedIn: false,
         userName: "",
-        accountLevel: AccountLevel.free);
+        accountLevel: AccountLevel.free,
+        currentShopMenu: ShopMenu.credits);
   }
 
   AppState copyWith(
@@ -69,7 +74,8 @@ class AppState {
       bool? loggedIn,
       String? userName,
       int? credits,
-      AccountLevel? accountLevel}) {
+      AccountLevel? accountLevel,
+      ShopMenu? currentShopMenu}) {
     return AppState(
         messages: messages ?? this.messages,
         documents: documents ?? this.documents,
@@ -82,7 +88,8 @@ class AppState {
         loggedIn: loggedIn ?? this.loggedIn,
         userName: userName ?? this.userName,
         credits: credits ?? this.credits,
-        accountLevel: accountLevel ?? this.accountLevel);
+        accountLevel: accountLevel ?? this.accountLevel,
+        currentShopMenu: currentShopMenu ?? this.currentShopMenu);
   }
 
   AppState addMessage(Message message) {
@@ -99,6 +106,7 @@ class AppState {
         loggedIn: loggedIn,
         userName: userName,
         credits: credits,
-        accountLevel: accountLevel);
+        accountLevel: accountLevel,
+        currentShopMenu: currentShopMenu);
   }
 }
