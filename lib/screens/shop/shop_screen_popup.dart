@@ -19,6 +19,35 @@ class ShopScreenPopup extends StatelessWidget {
       builder: (context, state) {
         return AlertDialog(
           title: Text(title),
+          actions: [
+            ElevatedButton.icon(
+              onPressed: () {
+                context
+                    .read<AppBloc>()
+                    .add(const AppShopMenuChanged(menu: ShopMenu.credits));
+              },
+              icon: const Icon(Icons.attach_money_outlined),
+              label: Text(
+                "Hocam\$ Al",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                context
+                    .read<AppBloc>()
+                    .add(const AppShopMenuChanged(menu: ShopMenu.levels));
+              },
+              icon: const Icon(Icons.leaderboard_rounded),
+              label: Text(
+                "Hocam Bot Seviyeni Yükselt",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            )
+          ],
         );
       },
     );

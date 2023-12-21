@@ -6,7 +6,7 @@ enum Temperature { direct, normal, high, extreme, overkill }
 
 enum AccountMenu { login, signup }
 
-enum AccountLevel { free, associate, proffessor }
+enum AccountLevel { free, associate, professor }
 
 enum ShopMenu { credits, levels }
 

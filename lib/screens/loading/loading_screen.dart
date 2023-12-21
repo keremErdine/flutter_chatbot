@@ -7,7 +7,7 @@ class LoadingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<AppBloc>().add(AppDataFromPrefsRead());
+    context.read<AppBloc>().add(const AppDataFromPrefsRead());
     return const Center(
       child: Text("Veriler alınıyor..."),
     );

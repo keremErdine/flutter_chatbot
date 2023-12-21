@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unused_local_variable
+// ignore_for_file: avoid_print
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -54,7 +54,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
     add(const AppMessageAddedToFirestore());
     if (event.message.sender == Sender.user) {
-      add(AppAIStartedGeneratingResponse());
+      add(const AppAIStartedGeneratingResponse());
       String conversation = "";
       for (var message in state.messages) {
         if (message.sender == Sender.user) {
@@ -70,7 +70,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                   context:
                       "Hocam\$'ların bitti. Lütfen daha fazla Hocam\$ alınız.",
                   sender: Sender.system)));
-          add(AppAIFinishedGeneratingResponse());
+          add(const AppAIFinishedGeneratingResponse());
           return;
         }
         String prompt =
@@ -92,7 +92,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                     "Hocam Bot bir yanıt oluştururken bir hata oluştu. Oluşan hata: $e. Lütfen bu hatayı yapımcıya iletiniz.",
                 sender: Sender.system)));
       }
-      add(AppAIFinishedGeneratingResponse());
+      add(const AppAIFinishedGeneratingResponse());
     }
   }
 
@@ -148,8 +148,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appDataFromPrefsRead(AppDataFromPrefsRead event, Emitter emit) async {
     final SharedPreferences prefs = await state.prefs;
 
-    String? email = prefs.getString("email");
-    String? password = prefs.getString("password");
+    //String? email = prefs.getString("email");
+    //String? password = prefs.getString("password");
     /*  if (email != null &&
         password != null &&
         email.isNotEmpty &&
@@ -367,12 +367,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void appFirebaseDataRead(AppFirebaseDataRead event, Emitter emit) async {
+    final String uid = event.credential.user!.uid;
     final CollectionReference users =
         FirebaseFirestore.instance.collection("Users");
     late DocumentSnapshot userData;
     if (state.loggedIn == false) {
       await users
-          .doc(event.credential.user!.uid)
+          .doc(uid)
           .get(const GetOptions(source: Source.server))
           .then((value) => userData = value);
     }
@@ -388,8 +389,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     AccountLevel decodedAccountLevel = AccountLevel.free;
     if (accountLevel == "associate") {
       decodedAccountLevel = AccountLevel.associate;
-    } else if (accountLevel == "proffessor") {
-      decodedAccountLevel = AccountLevel.proffessor;
+    } else if (accountLevel == "professor") {
+      decodedAccountLevel = AccountLevel.professor;
     }
 
     if (messages != []) {
@@ -406,14 +407,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         ));
       }
     }
-    add(const AppScreenChanged(screen: Screen.chatScreen));
     emit(state.copyWith(
         messages: decodedMessages,
         userName: userName,
         credits: credits,
         credential: event.credential,
         loggedIn: true,
-        accountLevel: decodedAccountLevel));
+        accountLevel: decodedAccountLevel,
+        screen: Screen.chatScreen));
   }
 
   void appAccountMenuPageChanged(

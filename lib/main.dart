@@ -27,7 +27,7 @@ void main() async {
           messagingSenderId: firebaseMessagingSenderID,
           projectId: firebaseProjectID));
 
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   final remoteConfig = FirebaseRemoteConfig.instance;
   await remoteConfig.setConfigSettings(
     RemoteConfigSettings(
@@ -98,7 +98,7 @@ class ChatbotApp extends StatelessWidget {
                             child: Image.asset(
                               "assets/account_level_icons/associate.png",
                             ))
-                      else if (state.accountLevel == AccountLevel.proffessor)
+                      else if (state.accountLevel == AccountLevel.professor)
                         SizedBox(
                             height: 60,
                             width: 150,
@@ -128,7 +128,9 @@ class ChatbotApp extends StatelessWidget {
                     if (state.screen == Screen.chatScreen)
                       IconButton(
                         onPressed: () {
-                          context.read<AppBloc>().add(AppChatHistoryCleared());
+                          context
+                              .read<AppBloc>()
+                              .add(const AppChatHistoryCleared());
                         },
                         icon: const Icon(
                           Icons.clear_all_outlined,

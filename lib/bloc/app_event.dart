@@ -5,15 +5,19 @@ class AppEvent {
 }
 
 class AppMessageWritten extends AppEvent {
-  AppMessageWritten({required this.message});
+  const AppMessageWritten({required this.message});
   final Message message;
 }
 
 @immutable
-class AppAIStartedGeneratingResponse extends AppEvent {}
+class AppAIStartedGeneratingResponse extends AppEvent {
+  const AppAIStartedGeneratingResponse();
+}
 
 @immutable
-class AppAIFinishedGeneratingResponse extends AppEvent {}
+class AppAIFinishedGeneratingResponse extends AppEvent {
+  const AppAIFinishedGeneratingResponse();
+}
 
 class AppScreenChanged extends AppEvent {
   const AppScreenChanged({required this.screen});
@@ -21,10 +25,14 @@ class AppScreenChanged extends AppEvent {
 }
 
 @immutable
-class AppChatHistoryCleared extends AppEvent {}
+class AppChatHistoryCleared extends AppEvent {
+  const AppChatHistoryCleared();
+}
 
 @immutable
-class AppDataFromPrefsRead extends AppEvent {}
+class AppDataFromPrefsRead extends AppEvent {
+  const AppDataFromPrefsRead();
+}
 
 @immutable
 class AppMessageAddedToFirestore extends AppEvent {
@@ -48,7 +56,7 @@ class AppUserLoggedIn extends AppEvent {
 }
 
 class AppUserSignedUp extends AppEvent {
-  AppUserSignedUp(
+  const AppUserSignedUp(
       {required this.email, required this.password, required this.userName});
   final String email;
   final String password;
