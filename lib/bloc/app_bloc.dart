@@ -375,9 +375,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     if (state.loggedIn == false) {
       await users
           .doc(uid)
-          .get(const GetOptions(source: Source.server))
-          .then((value) => userData = value);
-      print(userData);
+          .get(const GetOptions(
+            source: Source.server,
+          ))
+          .then((value) {
+        userData = value;
+      });
+      print("$userData \n");
     } else {
       return;
     }

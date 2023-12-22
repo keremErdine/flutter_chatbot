@@ -22,10 +22,11 @@ void main() async {
 
   await Firebase.initializeApp(
       options: const FirebaseOptions(
-          apiKey: firebaseApiKey,
-          appId: firebaseAppID,
-          messagingSenderId: firebaseMessagingSenderID,
-          projectId: firebaseProjectID));
+    apiKey: firebaseApiKey,
+    appId: firebaseAppID,
+    messagingSenderId: firebaseMessagingSenderID,
+    projectId: firebaseProjectID,
+  ));
 
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   final remoteConfig = FirebaseRemoteConfig.instance;

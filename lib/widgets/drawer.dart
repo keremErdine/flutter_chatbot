@@ -98,6 +98,14 @@ class MainDrawer extends StatelessWidget {
           const SizedBox(
             height: 5,
           ),
+          if (state.loggedIn)
+            TextButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.shopping_cart_outlined),
+                label: Text(
+                  "Dükkan",
+                  style: Theme.of(context).textTheme.labelSmall,
+                )),
           if (!state.loggedIn)
             ElevatedButton.icon(
                 onPressed: () {
@@ -109,7 +117,10 @@ class MainDrawer extends StatelessWidget {
                   );
                 },
                 icon: const Icon(Icons.person),
-                label: const Text("Giriş Yap/Kayıt Ol"))
+                label: Text(
+                  "Giriş Yap/Kayıt Ol",
+                  style: Theme.of(context).textTheme.labelMedium,
+                ))
           else
             TextButton.icon(
               onPressed: () {
@@ -118,7 +129,10 @@ class MainDrawer extends StatelessWidget {
                   builder: (context) => const LogoutPopup(),
                 );
               },
-              label: Text("Merhaba ${state.userName}."),
+              label: Text(
+                "Merhaba ${state.userName}.",
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
               icon: const Icon(Icons.person),
             ),
           const Spacer(),
