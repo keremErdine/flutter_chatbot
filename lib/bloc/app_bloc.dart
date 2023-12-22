@@ -266,12 +266,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appUserLoggedIn(AppUserLoggedIn event, Emitter emit) async {
     try {
-      UserCredential credential = await FirebaseAuth.instance
+      await FirebaseAuth.instance
           .signInWithEmailAndPassword(
-              email: event.email, password: event.password);
-
-      print("credential: $credential");
-      add(AppFirebaseDataRead(credential: credential));
+              email: event.email, password: event.password)
+          .then((credential) {
+        print("credential: $credential");
+        add(AppFirebaseDataRead(credential: credential));
+      });
 
       final SharedPreferences prefs = await state.prefs;
       prefs.setString("email", event.email);
@@ -376,8 +377,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           .doc(uid)
           .get(const GetOptions(source: Source.server))
           .then((value) => userData = value);
+      print(userData);
+    } else {
+      return;
     }
-
     final String userName = await userData.get("userName") as String;
     final String accountLevel = await userData.get("accountLevel") as String;
     final List messages = await userData.get("messages") as List<dynamic>;

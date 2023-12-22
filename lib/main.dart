@@ -27,7 +27,7 @@ void main() async {
           messagingSenderId: firebaseMessagingSenderID,
           projectId: firebaseProjectID));
 
-  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   final remoteConfig = FirebaseRemoteConfig.instance;
   await remoteConfig.setConfigSettings(
     RemoteConfigSettings(
@@ -54,7 +54,6 @@ void main() async {
       llm: llm,
       retriever: vectorStore.asRetriever(
           searchType: const VectorStoreSimilaritySearch()));
-
   runApp(const ChatbotApp());
 }
 
