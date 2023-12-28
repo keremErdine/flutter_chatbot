@@ -11,14 +11,16 @@ import 'package:flutter_chatbot/screens/welcome/welcome_screen.dart';
 import 'package:flutter_chatbot/widgets/drawer.dart';
 import 'package:flutter_chatbot/screens/about/about_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_pinecone/langchain_pinecone.dart';
 
 late String openAiApiKey;
-
+late WidgetsBinding widgetsBinding;
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -55,6 +57,8 @@ void main() async {
       llm: llm,
       retriever: vectorStore.asRetriever(
           searchType: const VectorStoreSimilaritySearch()));
+  FlutterNativeSplash.remove();
+
   runApp(const ChatbotApp());
 }
 

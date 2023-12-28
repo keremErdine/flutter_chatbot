@@ -7,6 +7,7 @@ import 'package:flutter_chatbot/classes/message.dart';
 // ignore: unused_import
 import 'package:flutter_chatbot/debug_tool.dart';
 import 'package:flutter_chatbot/main.dart';
+import 'package:flutter_chatbot/screens/shop/buy_credits.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_pinecone/langchain_pinecone.dart';
 import 'package:langchain/langchain.dart' as lang_chain;
@@ -40,6 +41,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppUserLoggedOut>(appUserLoggedOut);
     on<AppCreditsConsumed>(appCreditsConsumed);
     on<AppShopMenuChanged>(appShopMenuChanged);
+    on<AppCreditsPurchased>(appCreditsPurchased);
   }
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
@@ -458,5 +460,31 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appShopMenuChanged(AppShopMenuChanged event, Emitter emit) {
     emit(state.copyWith(currentShopMenu: event.menu));
+  }
+
+  void appCreditsPurchased(AppCreditsPurchased event, Emitter emit) {
+    final CreditType type = event.type;
+    if (type == CreditType.small) {
+      emit(state.copyWith(credits: state.credits + 25000));
+      add(AppMessageWritten(
+          message: Message(
+              context:
+                  "25000 Hocam\$ değerindeki satın alınımınız tamamlanmıştır.",
+              sender: Sender.system)));
+    } else if (type == CreditType.middle) {
+      emit(state.copyWith(credits: state.credits + 250000));
+      add(AppMessageWritten(
+          message: Message(
+              context:
+                  "250000 Hocam\$ değerindeki satın alınımınız tamamlanmıştır.",
+              sender: Sender.system)));
+    } else if (type == CreditType.big) {
+      emit(state.copyWith(credits: state.credits + 2500000));
+      add(AppMessageWritten(
+          message: Message(
+              context:
+                  "2500000 Hocam\$ değerindeki satın alınımınız tamamlanmıştır.",
+              sender: Sender.system)));
+    }
   }
 }

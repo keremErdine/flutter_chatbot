@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
 import 'package:flutter_chatbot/screens/account_popup/account_popup.dart';
+import 'package:flutter_chatbot/screens/shop/shop_screen_popup.dart';
 import 'package:flutter_chatbot/widgets/logout_popup.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -100,7 +101,12 @@ class MainDrawer extends StatelessWidget {
           ),
           if (state.loggedIn)
             TextButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const ShopScreenPopup(),
+                  );
+                },
                 icon: const Icon(Icons.shopping_cart_outlined),
                 label: Text(
                   "Dükkan",

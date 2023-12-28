@@ -87,3 +87,8 @@ class AppShopMenuChanged extends AppEvent {
   const AppShopMenuChanged({required this.menu});
   final ShopMenu menu;
 }
+
+class AppCreditsPurchased extends AppEvent {
+  const AppCreditsPurchased({required this.type});
+  final CreditType type;
+}
