@@ -92,3 +92,8 @@ class AppCreditsPurchased extends AppEvent {
   const AppCreditsPurchased({required this.type});
   final CreditType type;
 }
+
+class AppAccountLevelUpgraded extends AppEvent {
+  const AppAccountLevelUpgraded({required this.purchasedLevel});
+  final AccountLevel purchasedLevel;
+}

@@ -54,9 +54,8 @@ class ShopScreenPopup extends StatelessWidget {
           ],
           content: Builder(
             builder: (context) {
-              // Get available height and width of the build area of this widget. Make a choice depending on the size.
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              final double height = MediaQuery.of(context).size.height;
+              final double width = MediaQuery.of(context).size.width;
 
               return SizedBox(
                 height: height * 0.8,

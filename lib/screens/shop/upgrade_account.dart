@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
 
 class UpgradeAccount extends StatelessWidget {
@@ -40,7 +41,11 @@ class UpgradeAccountCard extends StatelessWidget {
           SizedBox(
             width: width * 0.03,
           ),
-          Text(feature),
+          const Icon(Icons.list_outlined),
+          Text(
+            feature,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
         ],
       ));
       featuresList.add(SizedBox(
@@ -77,7 +82,17 @@ class UpgradeAccountCard extends StatelessWidget {
           ),
           SizedBox(
             height: height * 0.03,
-          )
+          ),
+          ElevatedButton(
+              onPressed: () {
+                context
+                    .read<AppBloc>()
+                    .add(AppAccountLevelUpgraded(purchasedLevel: accountLevel));
+              },
+              child: Text(
+                price.toString(),
+                style: Theme.of(context).textTheme.headlineMedium,
+              )),
         ],
       ),
     ));

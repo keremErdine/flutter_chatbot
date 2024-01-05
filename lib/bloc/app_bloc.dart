@@ -42,6 +42,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppCreditsConsumed>(appCreditsConsumed);
     on<AppShopMenuChanged>(appShopMenuChanged);
     on<AppCreditsPurchased>(appCreditsPurchased);
+    on<AppAccountLevelUpgraded>(appAccountLevelUpgraded);
   }
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
@@ -464,6 +465,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appCreditsPurchased(AppCreditsPurchased event, Emitter emit) {
     final CreditType type = event.type;
+
     if (type == CreditType.small) {
       emit(state.copyWith(credits: state.credits + 25000));
       add(AppMessageWritten(
@@ -486,5 +488,17 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                   "2500000 Hocam\$ değerindeki satın alınımınız tamamlanmıştır.",
               sender: Sender.system)));
     }
+  }
+
+  void appAccountLevelUpgraded(AppAccountLevelUpgraded event, Emitter emit) {
+    String messageContext = "";
+    if (event.purchasedLevel == AccountLevel.associate) {
+      messageContext = "DOÇENT seviyesi satım alınımınız tamamlanmıştır!";
+    } else if (event.purchasedLevel == AccountLevel.professor) {
+      messageContext = "PROFESÖR seviyesi satım alınımınız tamamlanmıştır!";
+    }
+    emit(state.copyWith(accountLevel: event.purchasedLevel));
+    add(AppMessageWritten(
+        message: Message(context: messageContext, sender: Sender.system)));
   }
 }
