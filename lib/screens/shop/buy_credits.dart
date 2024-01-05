@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chatbot/bloc/app_bloc.dart';
 
 enum CreditType { small, middle, big }
 
@@ -83,7 +85,11 @@ class CreditPurchaseCard extends StatelessWidget {
             ),
             const Spacer(),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                context
+                    .read<AppBloc>()
+                    .add(AppCreditsPurchased(type: creditType));
+              },
               child: Text(
                 "$price ₺",
                 style: Theme.of(context).textTheme.headlineSmall,
