@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chatbot/bloc/app_bloc.dart';
 import 'package:flutter_chatbot/screens/shop/buy_credits.dart';
+import 'package:flutter_chatbot/screens/shop/upgrade_account.dart';
 
 class ShopScreenPopup extends StatelessWidget {
   const ShopScreenPopup({super.key});
@@ -14,6 +15,7 @@ class ShopScreenPopup extends StatelessWidget {
       listener: (context, state) {
         if (state.currentShopMenu == ShopMenu.levels) {
           title = "Hocam Bot seviyenizi yükseltin.";
+          content = const UpgradeAccount();
         } else {
           title = "Daha fazla Hocam\$ alın.";
           content = const BuyCredits();

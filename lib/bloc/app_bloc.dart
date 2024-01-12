@@ -77,7 +77,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           return;
         }
         String prompt =
-            'You are a helpful teacher. You are in a conversation with one of your students.Respond only in Turkish. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this $conversation Student:${event.message.context} You:';
+            'You are a helpful teacher. You are in a conversation with one of your students. Respond only in Turkish. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this $conversation Student:${event.message.context} You:';
         Trace aiResponseTrace =
             FirebasePerformance.instance.newTrace('ai-response');
         await aiResponseTrace.start();
@@ -363,7 +363,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         },
       ),
       "temperature": "normal",
-      "credits": 5000,
+      "credits": 500,
       "accountLevel": "free"
     }).then((value) {
       print("New user sucesfully created");
@@ -450,7 +450,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void appCreditsConsumed(AppCreditsConsumed event, Emitter emit) async {
-    final int creditCost = event.text.length ~/ 3;
+    int creditCost = (event.text.length ~/ 30) + 1;
+    if (state.accountLevel == AccountLevel.professor) {
+      creditCost = (creditCost ~/ 100) * 90;
+    }
     emit(state.copyWith(credits: state.credits - creditCost));
     final CollectionReference users =
         FirebaseFirestore.instance.collection("Users");
@@ -467,25 +470,25 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     final CreditType type = event.type;
 
     if (type == CreditType.small) {
+      emit(state.copyWith(credits: state.credits + 2500));
+      add(AppMessageWritten(
+          message: Message(
+              context:
+                  "2500 Hocam\$ değerindeki satın alınımınız tamamlanmıştır.",
+              sender: Sender.system)));
+    } else if (type == CreditType.middle) {
       emit(state.copyWith(credits: state.credits + 25000));
       add(AppMessageWritten(
           message: Message(
               context:
                   "25000 Hocam\$ değerindeki satın alınımınız tamamlanmıştır.",
               sender: Sender.system)));
-    } else if (type == CreditType.middle) {
+    } else if (type == CreditType.big) {
       emit(state.copyWith(credits: state.credits + 250000));
       add(AppMessageWritten(
           message: Message(
               context:
                   "250000 Hocam\$ değerindeki satın alınımınız tamamlanmıştır.",
-              sender: Sender.system)));
-    } else if (type == CreditType.big) {
-      emit(state.copyWith(credits: state.credits + 2500000));
-      add(AppMessageWritten(
-          message: Message(
-              context:
-                  "2500000 Hocam\$ değerindeki satın alınımınız tamamlanmıştır.",
               sender: Sender.system)));
     }
   }

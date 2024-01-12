@@ -14,7 +14,7 @@ class BuyCredits extends StatelessWidget {
         children: [
           CreditPurchaseCard(
               creditType: CreditType.small,
-              amount: 25000,
+              amount: 2500,
               color: Colors.blueAccent.shade100,
               description:
                   "Yaklaşık olarak 100 soru! Bu Hocam\$'lar size öğreniminize başlamanız için yetecek miktarda",
@@ -24,7 +24,7 @@ class BuyCredits extends StatelessWidget {
           ),
           CreditPurchaseCard(
               creditType: CreditType.middle,
-              amount: 250000,
+              amount: 25000,
               color: Colors.blueGrey.shade200,
               description:
                   "Yaklaşık olarak 1000 soru! Bu size yeter umarız ki.",
@@ -34,7 +34,7 @@ class BuyCredits extends StatelessWidget {
           ),
           CreditPurchaseCard(
               creditType: CreditType.big,
-              amount: 2500000,
+              amount: 250000,
               color: Colors.yellowAccent.shade100,
               description:
                   "Yaklaşık olarak 10000 soru! Bu kadara ne diye ihtiyacınız olsun ki?",
