@@ -72,7 +72,7 @@ class CreditPurchaseCard extends StatelessWidget {
               width: 5,
             ),
             Text(
-              "$amount Hocam\$",
+              "$amount Biljet",
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(

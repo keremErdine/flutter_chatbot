@@ -113,6 +113,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     string = string.replaceAll("Ã¢", "a");
     string = string.replaceAll("Å", "Ş");
     string = string.replaceAll("Ã", "Ç");
+    string = string.replaceAll("Ã", "Ü");
     return string;
   }
 
@@ -450,7 +451,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void appCreditsConsumed(AppCreditsConsumed event, Emitter emit) async {
-    int creditCost = (event.text.length ~/ 30) + 1;
+    int creditCost = (event.text.length ~/ 3) + 1;
     if (state.accountLevel == AccountLevel.professor) {
       creditCost = (creditCost ~/ 100) * 90;
     }
@@ -474,21 +475,21 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       add(AppMessageWritten(
           message: Message(
               context:
-                  "2500 Hocam\$ değerindeki satın alınımınız tamamlanmıştır.",
+                  "2500 Biljet değerindeki satın alınımınız tamamlanmıştır.",
               sender: Sender.system)));
     } else if (type == CreditType.middle) {
       emit(state.copyWith(credits: state.credits + 25000));
       add(AppMessageWritten(
           message: Message(
               context:
-                  "25000 Hocam\$ değerindeki satın alınımınız tamamlanmıştır.",
+                  "25000 Biljet değerindeki satın alınımınız tamamlanmıştır.",
               sender: Sender.system)));
     } else if (type == CreditType.big) {
       emit(state.copyWith(credits: state.credits + 250000));
       add(AppMessageWritten(
           message: Message(
               context:
-                  "250000 Hocam\$ değerindeki satın alınımınız tamamlanmıştır.",
+                  "250000 Biljet değerindeki satın alınımınız tamamlanmıştır.",
               sender: Sender.system)));
     }
   }

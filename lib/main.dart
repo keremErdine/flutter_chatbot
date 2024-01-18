@@ -112,7 +112,7 @@ class ChatbotApp extends StatelessWidget {
                   ),
                   actions: [
                     Text(
-                      "${state.credits} Hocam\$",
+                      "${state.credits} Biljet",
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     const SizedBox(

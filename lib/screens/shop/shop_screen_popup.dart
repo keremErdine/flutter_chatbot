@@ -17,7 +17,7 @@ class ShopScreenPopup extends StatelessWidget {
           title = "Hocam Bot seviyenizi yükseltin.";
           content = const UpgradeAccount();
         } else {
-          title = "Daha fazla Hocam\$ alın.";
+          title = "Daha fazla Biljet alın.";
           content = const BuyCredits();
         }
       },
@@ -34,7 +34,7 @@ class ShopScreenPopup extends StatelessWidget {
               },
               icon: const Icon(Icons.attach_money_outlined),
               label: Text(
-                "Hocam\$ Al",
+                "Biljet Al",
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
