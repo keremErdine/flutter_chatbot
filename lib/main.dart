@@ -30,7 +30,7 @@ void main() async {
     projectId: firebaseProjectID,
   ));
 
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  FlutterError.onError = ((details) {});
   final remoteConfig = FirebaseRemoteConfig.instance;
   await remoteConfig.setConfigSettings(
     RemoteConfigSettings(
@@ -111,10 +111,11 @@ class ChatbotApp extends StatelessWidget {
                     ],
                   ),
                   actions: [
-                    Text(
-                      "${state.credits} Biljet",
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
+                    if (state.loggedIn)
+                      Text(
+                        "${state.credits} Biljet",
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
                     const SizedBox(
                       width: 5,
                     ),
