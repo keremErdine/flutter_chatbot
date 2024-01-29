@@ -14,6 +14,7 @@ import 'package:langchain/langchain.dart' as lang_chain;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_performance/firebase_performance.dart';
+import 'package:uuid/uuid.dart';
 
 part 'app_event.dart';
 part 'app_state.dart';
@@ -22,6 +23,7 @@ late ChatOpenAI llm;
 late OpenAIEmbeddings embeddings;
 late Pinecone vectorStore;
 late lang_chain.RetrievalQAChain qaChain;
+const Uuid uuid = Uuid();
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc() : super(AppState.initial()) {
@@ -43,6 +45,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppShopMenuChanged>(appShopMenuChanged);
     on<AppCreditsPurchased>(appCreditsPurchased);
     on<AppAccountLevelUpgraded>(appAccountLevelUpgraded);
+    on<AppErrorOccured>(appErrorOccured);
   }
 
   void appMessageWritten(AppMessageWritten event, Emitter emit) async {
@@ -77,7 +80,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           return;
         }
         String prompt =
-            'You are a helpful teacher. You are in a conversation with one of your students. Respond only in Turkish. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this $conversation Student:${event.message.context} You:';
+            'You are a helpful teacher. You are in a conversation with one of your students. RESPOND ONLY IN TURKISH. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this $conversation Student:${event.message.context} You:';
         Trace aiResponseTrace =
             FirebasePerformance.instance.newTrace('ai-response');
         await aiResponseTrace.start();
@@ -150,35 +153,39 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void appDataFromPrefsRead(AppDataFromPrefsRead event, Emitter emit) async {
-    final SharedPreferences prefs = await state.prefs;
+    try {
+      final SharedPreferences prefs = await state.prefs;
 
-    //String? email = prefs.getString("email");
-    //String? password = prefs.getString("password");
-    /*  if (email != null &&
-        password != null &&
-        email.isNotEmpty &&
-        password.isNotEmpty) {
-      add(AppUserLoggedIn(email: email, password: password));
-    }*/
+      String? email = prefs.getString("email");
+      String? password = prefs.getString("password");
+      if (email != null &&
+          password != null &&
+          email.isNotEmpty &&
+          password.isNotEmpty) {
+        add(AppUserLoggedIn(email: email, password: password));
+      }
 
-    Screen screen = Screen.loadingScreen;
-    switch (prefs.getString("screen")) {
-      case "chat":
-        screen = Screen.chatScreen;
-        break;
-      case "about":
-        screen = Screen.aboutScreen;
-        break;
-      default:
-        screen = Screen.welcomeScreen;
-        await prefs.setString("screen", "welcome");
+      Screen screen = Screen.loadingScreen;
+      switch (prefs.getString("screen")) {
+        case "chat":
+          screen = Screen.chatScreen;
+          break;
+        case "about":
+          screen = Screen.aboutScreen;
+          break;
+        default:
+          screen = Screen.welcomeScreen;
+          await prefs.setString("screen", "welcome");
+      }
+
+      emit(state.copyWith(
+        screen: screen,
+      ));
+      print("Done reading prefs");
+      //addVectorsToStore();
+    } catch (e) {
+      add(AppErrorOccured(details: e.toString()));
     }
-
-    emit(state.copyWith(
-      screen: screen,
-    ));
-    print("Done reading prefs");
-    //addVectorsToStore();
   }
 
   void appMessageAddedToFirestore(
@@ -282,7 +289,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       prefs.setString("email", event.email);
       prefs.setString("password", event.password);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
+      if (e.code == 'invalid-email') {
         add(AppMessageWritten(
             message: Message(
                 context:
@@ -299,6 +306,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         add(AppMessageWritten(
             message: Message(context: e.code, sender: Sender.system)));
         print(e);
+        add(AppErrorOccured(details: e.message!));
         return;
       }
     }
@@ -372,60 +380,65 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void appFirebaseDataRead(AppFirebaseDataRead event, Emitter emit) async {
-    final String uid = event.credential.user!.uid;
-    final CollectionReference users =
-        FirebaseFirestore.instance.collection("Users");
-    late DocumentSnapshot userData;
-    if (state.loggedIn == false) {
-      await users
-          .doc(uid)
-          .get(const GetOptions(
-            source: Source.server,
-          ))
-          .then((value) {
-        userData = value;
-      });
-      print("$userData \n");
-    } else {
-      return;
-    }
-    final String userName = await userData.get("userName") as String;
-    final String accountLevel = await userData.get("accountLevel") as String;
-    final List messages = await userData.get("messages") as List<dynamic>;
-
-    final List senders = await userData.get("messageSenders") as List<dynamic>;
-    final List<Message> decodedMessages = <Message>[];
-    final int credits = await userData.get("credits");
-
-    AccountLevel decodedAccountLevel = AccountLevel.free;
-    if (accountLevel == "associate") {
-      decodedAccountLevel = AccountLevel.associate;
-    } else if (accountLevel == "professor") {
-      decodedAccountLevel = AccountLevel.professor;
-    }
-
-    if (messages != []) {
-      for (var message in messages) {
-        Sender decodedSender = Sender.system;
-        if (senders[messages.indexOf(message)] == "bot") {
-          decodedSender = Sender.bot;
-        } else if (senders[messages.indexOf(message)] == "user") {
-          decodedSender = Sender.user;
-        }
-        decodedMessages.add(Message(
-          context: message,
-          sender: decodedSender,
-        ));
+    try {
+      final String uid = event.credential.user!.uid;
+      final CollectionReference users =
+          FirebaseFirestore.instance.collection("Users");
+      late DocumentSnapshot userData;
+      if (state.loggedIn == false) {
+        await users
+            .doc(uid)
+            .get(const GetOptions(
+              source: Source.server,
+            ))
+            .then((value) {
+          userData = value;
+        });
+        print("$userData \n");
+      } else {
+        return;
       }
+      final String userName = await userData.get("userName") as String;
+      final String accountLevel = await userData.get("accountLevel") as String;
+      final List messages = await userData.get("messages") as List<dynamic>;
+
+      final List senders =
+          await userData.get("messageSenders") as List<dynamic>;
+      final List<Message> decodedMessages = <Message>[];
+      final int credits = await userData.get("credits");
+
+      AccountLevel decodedAccountLevel = AccountLevel.free;
+      if (accountLevel == "associate") {
+        decodedAccountLevel = AccountLevel.associate;
+      } else if (accountLevel == "professor") {
+        decodedAccountLevel = AccountLevel.professor;
+      }
+
+      if (messages != []) {
+        for (var message in messages) {
+          Sender decodedSender = Sender.system;
+          if (senders[messages.indexOf(message)] == "bot") {
+            decodedSender = Sender.bot;
+          } else if (senders[messages.indexOf(message)] == "user") {
+            decodedSender = Sender.user;
+          }
+          decodedMessages.add(Message(
+            context: message,
+            sender: decodedSender,
+          ));
+        }
+      }
+      emit(state.copyWith(
+          messages: decodedMessages,
+          userName: userName,
+          credits: credits,
+          credential: event.credential,
+          loggedIn: true,
+          accountLevel: decodedAccountLevel,
+          screen: Screen.chatScreen));
+    } catch (e) {
+      add(AppErrorOccured(details: e.toString()));
     }
-    emit(state.copyWith(
-        messages: decodedMessages,
-        userName: userName,
-        credits: credits,
-        credential: event.credential,
-        loggedIn: true,
-        accountLevel: decodedAccountLevel,
-        screen: Screen.chatScreen));
   }
 
   void appAccountMenuPageChanged(
@@ -467,8 +480,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(state.copyWith(currentShopMenu: event.menu));
   }
 
-  void appCreditsPurchased(AppCreditsPurchased event, Emitter emit) {
+  void appCreditsPurchased(AppCreditsPurchased event, Emitter emit) async {
     final CreditType type = event.type;
+    final CollectionReference users =
+        FirebaseFirestore.instance.collection("Users");
 
     if (type == CreditType.small) {
       emit(state.copyWith(credits: state.credits + 2500));
@@ -477,6 +492,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
               context:
                   "2500 Biljet değerindeki satın alınımınız tamamlanmıştır.",
               sender: Sender.system)));
+      await users
+          .doc(state.credential!.user!.uid)
+          .set({"credits": state.credits}, SetOptions(merge: true));
     } else if (type == CreditType.middle) {
       emit(state.copyWith(credits: state.credits + 25000));
       add(AppMessageWritten(
@@ -484,6 +502,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
               context:
                   "25000 Biljet değerindeki satın alınımınız tamamlanmıştır.",
               sender: Sender.system)));
+      await users
+          .doc(state.credential!.user!.uid)
+          .set({"credits": state.credits}, SetOptions(merge: true));
     } else if (type == CreditType.big) {
       emit(state.copyWith(credits: state.credits + 250000));
       add(AppMessageWritten(
@@ -491,18 +512,44 @@ class AppBloc extends Bloc<AppEvent, AppState> {
               context:
                   "250000 Biljet değerindeki satın alınımınız tamamlanmıştır.",
               sender: Sender.system)));
+      await users
+          .doc(state.credential!.user!.uid)
+          .set({"credits": state.credits}, SetOptions(merge: true));
     }
   }
 
-  void appAccountLevelUpgraded(AppAccountLevelUpgraded event, Emitter emit) {
+  void appAccountLevelUpgraded(
+      AppAccountLevelUpgraded event, Emitter emit) async {
+    final CollectionReference users =
+        FirebaseFirestore.instance.collection("Users");
     String messageContext = "";
     if (event.purchasedLevel == AccountLevel.associate) {
       messageContext = "DOÇENT seviyesi satım alınımınız tamamlanmıştır!";
+      users
+          .doc(state.credential!.user!.uid)
+          .set({"accountLevel": "associate"}, SetOptions(merge: true));
     } else if (event.purchasedLevel == AccountLevel.professor) {
       messageContext = "PROFESÖR seviyesi satım alınımınız tamamlanmıştır!";
+      users
+          .doc(state.credential!.user!.uid)
+          .set({"accountLevel": "professor"}, SetOptions(merge: true));
     }
     emit(state.copyWith(accountLevel: event.purchasedLevel));
     add(AppMessageWritten(
         message: Message(context: messageContext, sender: Sender.system)));
+  }
+
+  void appErrorOccured(AppErrorOccured event, Emitter emit) async {
+    String errorVictimUuid = "User not logged in.";
+    if (state.loggedIn) {
+      errorVictimUuid = state.credential!.user!.uid;
+    }
+    final CollectionReference errors =
+        FirebaseFirestore.instance.collection("Errors");
+    await errors.doc(uuid.v8()).set({
+      "errorDetails": event.details,
+      "errorVictimUuid": errorVictimUuid,
+      "errorTime": DateTime.now(),
+    });
   }
 }

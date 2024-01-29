@@ -97,3 +97,8 @@ class AppAccountLevelUpgraded extends AppEvent {
   const AppAccountLevelUpgraded({required this.purchasedLevel});
   final AccountLevel purchasedLevel;
 }
+
+class AppErrorOccured extends AppEvent {
+  const AppErrorOccured({required this.details});
+  final String details;
+}

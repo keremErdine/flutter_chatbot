@@ -30,7 +30,7 @@ void main() async {
     projectId: firebaseProjectID,
   ));
 
-  FlutterError.onError = ((details) {});
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   final remoteConfig = FirebaseRemoteConfig.instance;
   await remoteConfig.setConfigSettings(
     RemoteConfigSettings(

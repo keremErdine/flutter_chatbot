@@ -54,6 +54,7 @@ dependencies:
   firebase_analytics: ^10.7.4
   flutter_gpt_tokenizer: ^0.1.0
   flutter_native_splash: ^2.3.7
+  uuid: ^4.2.2
 
 
 
