@@ -87,6 +87,7 @@ flutter:
   assets:
      - assets/account_level_icons/associate.png
      - assets/account_level_icons/proffesor.png
+     - assets/account_level_icons/free.png
      - assets/biljet/bj_normal.png
      - assets/biljet/bj_premium.png
 

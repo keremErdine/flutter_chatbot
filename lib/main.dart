@@ -113,11 +113,19 @@ class ChatbotApp extends StatelessWidget {
                   actions: [
                     if (state.loggedIn)
                       if (state.accountLevel == AccountLevel.professor)
-                        Image.asset("assets/biljet/bj_premium.png")
+                        Image.asset(
+                          "assets/biljet/bj_premium.png",
+                          height: 32.5,
+                          width: 35,
+                        )
                       else
-                        Image.asset("assets/biljet/bj_normal.png"),
+                        Image.asset(
+                          "assets/biljet/bj_normal.png",
+                          height: 35,
+                          width: 35,
+                        ),
                     const SizedBox(
-                      width: 2,
+                      width: 3,
                     ),
                     Text(
                       state.credits.toString(),
