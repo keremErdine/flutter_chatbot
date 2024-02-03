@@ -14,7 +14,7 @@ class UpgradeAccount extends StatelessWidget {
               levelString: "Ücretsiz",
               color: Colors.white70,
               accountLevel: AccountLevel.free,
-              description: "Basit Hocam Bot deneyimi",
+              description: "Basit Hocam Bot deneyimi.",
               price: 0,
               features: ["Hocam Bot'a erişim."],
               imagePath: "assets/account_level_icons/free.png"),
