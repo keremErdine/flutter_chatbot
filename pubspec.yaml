@@ -87,6 +87,8 @@ flutter:
   assets:
      - assets/account_level_icons/associate.png
      - assets/account_level_icons/proffesor.png
+     - assets/biljet/bj_normal.png
+     - assets/biljet/bj_premium.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
