@@ -74,13 +74,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           add(AppMessageWritten(
               message: Message(
                   context:
-                      "Hocam\$'ların bitti. Lütfen daha fazla Hocam\$ alınız.",
+                      "Biljet'iniz bitti. Lütfen daha fazla Biljet alınız.",
                   sender: Sender.system)));
           add(const AppAIFinishedGeneratingResponse());
           return;
         }
         String prompt =
-            'You are a helpful teacher. You are in a conversation with one of your students. RESPOND ONLY IN TURKISH. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this $conversation Student:${event.message.context} You:';
+            'You are a helpful teacher. You are in a conversation with one of your students. RESPOND ONLY IN TURKISH. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this $conversation Student:${event.message.context} You: ';
         Trace aiResponseTrace =
             FirebasePerformance.instance.newTrace('ai-response');
         await aiResponseTrace.start();
@@ -97,6 +97,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                 context:
                     "Hocam Bot bir yanıt oluştururken bir hata oluştu. Oluşan hata: $e. Lütfen bu hatayı yapımcıya iletiniz.",
                 sender: Sender.system)));
+        add(AppErrorOccured(details: e.toString()));
       }
       add(const AppAIFinishedGeneratingResponse());
     }

@@ -124,13 +124,15 @@ class ChatbotApp extends StatelessWidget {
                           height: 35,
                           width: 35,
                         ),
-                    const SizedBox(
-                      width: 3,
-                    ),
-                    Text(
-                      state.credits.toString(),
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
+                    if (state.loggedIn)
+                      const SizedBox(
+                        width: 3,
+                      ),
+                    if (state.loggedIn)
+                      Text(
+                        state.credits.toString(),
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
                     const SizedBox(
                       width: 5,
                     ),
