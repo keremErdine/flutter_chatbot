@@ -48,6 +48,7 @@ void main() async {
   embeddings = OpenAIEmbeddings(apiKey: openAiApiKey);
   llm = ChatOpenAI(
       apiKey: openAiApiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
+
   vectorStore = Pinecone(
       apiKey: pineconeApiKey,
       indexName: pineconeIndexName,

@@ -11,6 +11,7 @@ import 'package:flutter_chatbot/screens/shop/buy_credits.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_pinecone/langchain_pinecone.dart';
 import 'package:langchain/langchain.dart' as lang_chain;
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_performance/firebase_performance.dart';
@@ -80,7 +81,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           return;
         }
         String prompt =
-            'You are a helpful teacher. You are in a conversation with one of your students. RESPOND ONLY IN TURKISH. If you can\'t find the answer in the context, truthfully say that you couldn\'t find it. The conversation goes like this $conversation Student:${event.message.context} You: ';
+            'You are a helpful teacher. You are in a conversation with one of your students. RESPOND ONLY IN TURKISH. If you can\'t find the answer in the context given to you, truthfully say that you couldn\'t find it. The conversation goes like this $conversation Student:${event.message.context} You: ';
         Trace aiResponseTrace =
             FirebasePerformance.instance.newTrace('ai-response');
         await aiResponseTrace.start();

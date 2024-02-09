@@ -673,7 +673,7 @@ packages:
     source: hosted
     version: "5.4.0"
   pinecone:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: pinecone
       sha256: a550434ea1bc0d9e0762c0dbf40b864837326f35230126d3d1e0780961d71e54
