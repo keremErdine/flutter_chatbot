@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chatbot/classes/message.dart';
 // ignore: unused_import
 import 'package:flutter_chatbot/debug_tool.dart';
+import 'package:flutter_chatbot/main.dart';
 
 import 'package:flutter_chatbot/screens/shop/buy_credits.dart';
 import 'package:langchain_openai/langchain_openai.dart';
@@ -80,18 +81,18 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           add(const AppAIFinishedGeneratingResponse());
           return;
         }
-        String prompt =
-            'You are a helpful teacher named "Hocam Bot". You are in a conversation with one of your student "${state.userName}". If you are asked a question, look for it in the context given to you. If you can\'t find the answer in the context given to you, truthfully say that you couldn\'t find it. YOU SHOULD RESPOND ONLY IN TURKISH. The conversation goes like this: $conversation Student:${event.message.context} You: ';
+        String aiPrompt =
+            '$prompt The conversation goes like this: $conversation Student:${event.message.context} You: ';
         Trace aiResponseTrace =
             FirebasePerformance.instance.newTrace('ai-response');
         await aiResponseTrace.start();
-        final response = await qaChain.call(prompt);
+        final response = await qaChain.call(aiPrompt);
         await aiResponseTrace.stop();
         add(AppMessageWritten(
             message: Message(
                 context: _convertToUtf8(response['result']),
                 sender: Sender.bot)));
-        add(AppCreditsConsumed(text: prompt + response['result']));
+        add(AppCreditsConsumed(text: aiPrompt + response['result']));
       } catch (e) {
         add(AppMessageWritten(
             message: Message(
