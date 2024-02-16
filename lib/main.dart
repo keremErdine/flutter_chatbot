@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +32,8 @@ void main() async {
     projectId: firebaseProjectID,
   ));
 
+  Trace appLaunch = FirebasePerformance.instance.newTrace("appLaunch");
+  appLaunch.start();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   final remoteConfig = FirebaseRemoteConfig.instance;
   await remoteConfig.setConfigSettings(
@@ -60,7 +63,7 @@ void main() async {
           defaultOptions: VectorStoreRetrieverOptions(
               searchType: VectorStoreSearchType.similarity())));
   FlutterNativeSplash.remove();
-
+  appLaunch.stop();
   runApp(const ChatbotApp());
 }
 
