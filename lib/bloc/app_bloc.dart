@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chatbot/classes/message.dart';
 // ignore: unused_import
 import 'package:flutter_chatbot/debug_tool.dart';
-import 'package:flutter_chatbot/main.dart';
+
 import 'package:flutter_chatbot/screens/shop/buy_credits.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_pinecone/langchain_pinecone.dart';
@@ -230,7 +230,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appAITemperatureSelected(
       AppAITemperatureSelected event, Emitter emit) async {
-    if (state.loggedIn == false) {
+    /*if (state.loggedIn == false) {
       return;
     }
     double temperature = 0.25;
@@ -253,9 +253,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
 
     llm = ChatOpenAI(
-        apiKey: openAiApiKey,
-        model: "gpt-3.5-turbo-1106",
-        temperature: temperature);
+        apiKey: openAiApiKey,);
     emit(state.copyWith(temperature: event.temperature));
     String temperatureValue = "normal";
     if (event.temperature == Temperature.direct) {
@@ -274,7 +272,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         FirebaseFirestore.instance.collection("Users");
     await users
         .doc(state.credential!.user!.uid)
-        .set({"temperature": temperatureValue}, SetOptions(merge: true));
+        .set({"temperature": temperatureValue}, SetOptions(merge: true));*/
   }
 
   void appUserLoggedIn(AppUserLoggedIn event, Emitter emit) async {

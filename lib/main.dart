@@ -46,8 +46,7 @@ void main() async {
       remoteConfig.getString("pineconeEnvironment");
   final String pineconeIndexName = remoteConfig.getString("pineconeIndexName");
   embeddings = OpenAIEmbeddings(apiKey: openAiApiKey);
-  llm = ChatOpenAI(
-      apiKey: openAiApiKey, model: "gpt-3.5-turbo-1106", temperature: 0.25);
+  llm = ChatOpenAI(apiKey: openAiApiKey);
 
   vectorStore = Pinecone(
       apiKey: pineconeApiKey,
@@ -57,7 +56,8 @@ void main() async {
   qaChain = RetrievalQAChain.fromLlm(
       llm: llm,
       retriever: vectorStore.asRetriever(
-          searchType: const VectorStoreSimilaritySearch()));
+          defaultOptions: VectorStoreRetrieverOptions(
+              searchType: VectorStoreSearchType.similarity())));
   FlutterNativeSplash.remove();
 
   runApp(const ChatbotApp());
