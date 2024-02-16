@@ -285,7 +285,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         print("credential: $credential");
         add(AppFirebaseDataRead(credential: credential));
       });
-
+      add(AppMessageWritten(
+          message: Message(
+              context: "Hesabınıza giriş yapılmıştır!",
+              sender: Sender.system)));
       final SharedPreferences prefs = await state.prefs;
       prefs.setString("email", event.email);
       prefs.setString("password", event.password);
