@@ -81,7 +81,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           return;
         }
         String prompt =
-            'You are a helpful teacher. You are in a conversation with one of your students. RESPOND ONLY IN TURKISH. If you can\'t find the answer in the context given to you, truthfully say that you couldn\'t find it. The conversation goes like this $conversation Student:${event.message.context} You: ';
+            'You are a helpful teacher named "Hocam Bot". You are in a conversation with one of your student "${state.userName}". If you are asked a question, look for it in the context given to you. If you can\'t find the answer in the context given to you, truthfully say that you couldn\'t find it. YOU SHOULD RESPOND ONLY IN TURKISH. The conversation goes like this: $conversation Student:${event.message.context} You: ';
         Trace aiResponseTrace =
             FirebasePerformance.instance.newTrace('ai-response');
         await aiResponseTrace.start();
@@ -184,7 +184,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         screen: screen,
       ));
       print("Done reading prefs");
-      //addVectorsToStore();
+      addVectorsToStore();
     } catch (e) {
       add(AppErrorOccured(details: e.toString()));
     }
