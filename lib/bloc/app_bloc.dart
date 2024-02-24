@@ -165,7 +165,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           password != null &&
           email.isNotEmpty &&
           password.isNotEmpty) {
-        add(AppUserLoggedIn(email: email, password: password));
+        // add(AppUserLoggedIn(email: email, password: password));
       }
 
       Screen screen = Screen.loadingScreen;
@@ -219,6 +219,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
               context:
                   "Bir hata oluştu: $e. Lütfen bu hatayı yapımcıya iletin.",
               sender: Sender.system)));
+      add(AppErrorOccured(details: e.toString()));
     }
   }
 
@@ -282,7 +283,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           .signInWithEmailAndPassword(
               email: event.email, password: event.password)
           .then((credential) {
-        print("credential: $credential");
+        print(credential);
         add(AppFirebaseDataRead(credential: credential));
       });
       add(AppMessageWritten(
@@ -386,63 +387,58 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appFirebaseDataRead(AppFirebaseDataRead event, Emitter emit) async {
     try {
       final String uid = event.credential.user!.uid;
-      final CollectionReference users =
-          FirebaseFirestore.instance.collection("Users");
-      late DocumentSnapshot userData;
       if (state.loggedIn == false) {
-        await users
-            .doc(uid)
-            .get(const GetOptions(
-              source: Source.server,
-            ))
-            .then((value) {
-          userData = value;
-        });
+        final DocumentSnapshot userData =
+            await FirebaseFirestore.instance.collection("Users").doc(uid).get();
         print("$userData \n");
+        final String userName = await userData.get("userName") as String;
+        final String accountLevel =
+            await userData.get("accountLevel") as String;
+        final List messages = await userData.get("messages") as List<dynamic>;
+
+        final List senders =
+            await userData.get("messageSenders") as List<dynamic>;
+        final List<Message> decodedMessages = <Message>[];
+        final int credits = await userData.get("credits");
+
+        AccountLevel decodedAccountLevel = AccountLevel.free;
+        if (accountLevel == "associate") {
+          decodedAccountLevel = AccountLevel.associate;
+        } else if (accountLevel == "professor") {
+          decodedAccountLevel = AccountLevel.professor;
+        }
+
+        if (messages != []) {
+          for (var message in messages) {
+            Sender decodedSender = Sender.system;
+            if (senders[messages.indexOf(message)] == "bot") {
+              decodedSender = Sender.bot;
+            } else if (senders[messages.indexOf(message)] == "user") {
+              decodedSender = Sender.user;
+            }
+            decodedMessages.add(Message(
+              context: message,
+              sender: decodedSender,
+            ));
+          }
+        }
+        emit(state.copyWith(
+            messages: decodedMessages,
+            userName: userName,
+            credits: credits,
+            credential: event.credential,
+            loggedIn: true,
+            accountLevel: decodedAccountLevel,
+            screen: Screen.chatScreen));
       } else {
+        add(const AppErrorOccured(
+            details: "App failed to load data from cloud firestore!"));
         return;
       }
-      final String userName = await userData.get("userName") as String;
-      final String accountLevel = await userData.get("accountLevel") as String;
-      final List messages = await userData.get("messages") as List<dynamic>;
-
-      final List senders =
-          await userData.get("messageSenders") as List<dynamic>;
-      final List<Message> decodedMessages = <Message>[];
-      final int credits = await userData.get("credits");
-
-      AccountLevel decodedAccountLevel = AccountLevel.free;
-      if (accountLevel == "associate") {
-        decodedAccountLevel = AccountLevel.associate;
-      } else if (accountLevel == "professor") {
-        decodedAccountLevel = AccountLevel.professor;
-      }
-
-      if (messages != []) {
-        for (var message in messages) {
-          Sender decodedSender = Sender.system;
-          if (senders[messages.indexOf(message)] == "bot") {
-            decodedSender = Sender.bot;
-          } else if (senders[messages.indexOf(message)] == "user") {
-            decodedSender = Sender.user;
-          }
-          decodedMessages.add(Message(
-            context: message,
-            sender: decodedSender,
-          ));
-        }
-      }
-      emit(state.copyWith(
-          messages: decodedMessages,
-          userName: userName,
-          credits: credits,
-          credential: event.credential,
-          loggedIn: true,
-          accountLevel: decodedAccountLevel,
-          screen: Screen.chatScreen));
     } catch (e) {
       add(AppErrorOccured(details: e.toString()));
     }
+    print("!!!!!!!!!data read!!!!!!!!!!!!!");
   }
 
   void appAccountMenuPageChanged(

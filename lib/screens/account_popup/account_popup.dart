@@ -158,9 +158,9 @@ class AccountMenuPopup extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pop();
                     context.read<AppBloc>().add(AppUserSignedUp(
-                        userName: userNameController.value.text,
-                        email: emailController.value.text,
-                        password: passwordController.value.text));
+                        userName: userNameController.value.text.trim(),
+                        email: emailController.value.text.trim(),
+                        password: passwordController.value.text.trim()));
                   },
                   child: Text(
                     "Hesap Oluştur",

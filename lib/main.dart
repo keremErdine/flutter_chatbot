@@ -11,7 +11,6 @@ import 'package:flutter_chatbot/screens/loading/loading_screen.dart';
 import 'package:flutter_chatbot/screens/welcome/welcome_screen.dart';
 import 'package:flutter_chatbot/widgets/drawer.dart';
 import 'package:flutter_chatbot/screens/about/about_screen.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
@@ -34,7 +33,6 @@ void main() async {
 
   Trace appLaunch = FirebasePerformance.instance.newTrace("appLaunch");
   appLaunch.start();
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   final remoteConfig = FirebaseRemoteConfig.instance;
   await remoteConfig.setConfigSettings(
     RemoteConfigSettings(
