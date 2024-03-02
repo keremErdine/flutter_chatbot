@@ -387,6 +387,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appFirebaseDataRead(AppFirebaseDataRead event, Emitter emit) async {
     try {
       final String uid = event.credential.user!.uid;
+      print(uid);
       if (state.loggedIn == false) {
         final DocumentSnapshot userData =
             await FirebaseFirestore.instance.collection("Users").doc(uid).get();

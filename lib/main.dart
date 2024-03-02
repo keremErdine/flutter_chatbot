@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -33,6 +34,9 @@ void main() async {
 
   Trace appLaunch = FirebasePerformance.instance.newTrace("appLaunch");
   appLaunch.start();
+  // Set Firestore log level to verbose
+  FirebaseFirestore.instance.settings = const Settings();
+
   final remoteConfig = FirebaseRemoteConfig.instance;
   await remoteConfig.setConfigSettings(
     RemoteConfigSettings(
@@ -56,10 +60,13 @@ void main() async {
       embeddings: embeddings,
       environment: pineconeEnvironment);
   qaChain = RetrievalQAChain.fromLlm(
-      llm: llm,
-      retriever: vectorStore.asRetriever(
-          defaultOptions: VectorStoreRetrieverOptions(
-              searchType: VectorStoreSearchType.similarity())));
+    llm: llm,
+    retriever: vectorStore.asRetriever(
+      defaultOptions: VectorStoreRetrieverOptions(
+        searchType: VectorStoreSearchType.similarity(),
+      ),
+    ),
+  );
   FlutterNativeSplash.remove();
   appLaunch.stop();
   runApp(const ChatbotApp());
