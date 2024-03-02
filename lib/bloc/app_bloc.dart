@@ -384,11 +384,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     });
   }
 
+
   void appFirebaseDataRead(AppFirebaseDataRead event, Emitter emit) async {
     try {
       final String uid = event.credential.user!.uid;
       print(uid);
-      if (state.loggedIn == false) {
+      if (!state.loggedIn) {
         final DocumentSnapshot userData =
             await FirebaseFirestore.instance.collection("Users").doc(uid).get();
         print("$userData \n");
@@ -409,7 +410,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           decodedAccountLevel = AccountLevel.professor;
         }
 
-        if (messages != []) {
+        if (messages.isNotEmpty) {
           for (var message in messages) {
             Sender decodedSender = Sender.system;
             if (senders[messages.indexOf(message)] == "bot") {
@@ -441,6 +442,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
     print("!!!!!!!!!data read!!!!!!!!!!!!!");
   }
+  
+
 
   void appAccountMenuPageChanged(
       AppAccountMenuPageChanged event, Emitter emit) {

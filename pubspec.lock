@@ -444,26 +444,26 @@ packages:
     dependency: "direct main"
     description:
       name: langchain
-      sha256: "95c2c691452391689eed1f867957377b579ddccf58481f673412a54b99e284b6"
+      sha256: "2c95d34523a0733a2644bb2cf1dc6ec7803413e550889a389eeb3b5841bf3a3f"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.3"
+    version: "0.4.2"
   langchain_openai:
     dependency: "direct main"
     description:
       name: langchain_openai
-      sha256: "444b52ff54b345eb7f87b171b1f1051c54033e3170174eb21cc67626d48ab67e"
+      sha256: c95380a31643d6c45ffc2e054bf032315b0023ff97f8e1530dd90baa8b7fb350
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.3+1"
+    version: "0.4.1"
   langchain_pinecone:
     dependency: "direct main"
     description:
       name: langchain_pinecone
-      sha256: "1ea5fb45b85a72177d7b05886549c13efc15cde9b66d8a92093180c951289dfa"
+      sha256: f5f6e8148c9599f49fd537358d4296aec0f708e75b1df8bacf14c9f051dcfb62
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.6+12"
+    version: "0.0.7"
   langchain_tiktoken:
     dependency: transitive
     description:
