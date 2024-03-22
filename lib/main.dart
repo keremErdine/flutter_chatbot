@@ -16,12 +16,11 @@ import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_pinecone/langchain_pinecone.dart';
 
-late String openAiApiKey;
-late WidgetsBinding widgetsBinding;
 late String prompt;
 void main() async {
-  widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
 
   await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -43,7 +42,7 @@ void main() async {
   );
   await remoteConfig.fetchAndActivate();
   prompt = remoteConfig.getString("prompt");
-  openAiApiKey = remoteConfig.getString('openAiApiKey');
+  final String openAiApiKey = remoteConfig.getString('openAiApiKey');
   final String pineconeApiKey = remoteConfig.getString("pineconeApiKey");
   final String pineconeEnvironment =
       remoteConfig.getString("pineconeEnvironment");

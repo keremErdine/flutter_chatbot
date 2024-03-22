@@ -279,44 +279,50 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appUserLoggedIn(AppUserLoggedIn event, Emitter emit) async {
     try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: event.email, password: event.password)
-          .then((credential) {
-        print(credential);
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: event.email,
+        password: event.password,
+      ).then((value)
+      {
+        UserCredential credential = value;
         add(AppFirebaseDataRead(credential: credential));
       });
       add(AppMessageWritten(
-          message: Message(
-              context: "Hesabınıza giriş yapılmıştır!",
-              sender: Sender.system)));
+        message: Message(
+          context: "Hesabınıza giriş yapılmıştır!",
+          sender: Sender.system,
+        ),
+      ));
       final SharedPreferences prefs = await state.prefs;
       prefs.setString("email", event.email);
       prefs.setString("password", event.password);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
         add(AppMessageWritten(
-            message: Message(
-                context:
-                    "Bu e-postayı kullanan bir kullanıcı bulunamadı. Hesap mı açmak istemiştiniz?",
-                sender: Sender.system)));
-        return;
-      } else if (e.code == 'invalid-login-credentials') {
+          message: Message(
+            context: "Bu e-postayı kullanan bir kullanıcı bulunamadı. Hesap mı açmak istemiştiniz?",
+            sender: Sender.system,
+          ),
+        ));
+      } else if (e.code == 'wrong-password') {
         add(AppMessageWritten(
-            message: Message(
-                context: "Bu parola bu kullanıcı için yanlış. Yine deneyiniz.",
-                sender: Sender.system)));
-        return;
+          message: Message(
+            context: "Bu parola bu kullanıcı için yanlış. Yine deneyiniz.",
+            sender: Sender.system,
+          ),
+        ));
       } else {
         add(AppMessageWritten(
-            message: Message(context: e.code, sender: Sender.system)));
+          message: Message(
+            context: e.code,
+            sender: Sender.system,
+          ),
+        ));
         print(e);
         add(AppErrorOccured(details: e.message!));
-        return;
       }
     }
     emit(state.copyWith(screen: Screen.chatScreen));
-    return;
   }
 
   void appUserSignedUp(AppUserSignedUp event, Emitter emit) async {
@@ -388,20 +394,17 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void appFirebaseDataRead(AppFirebaseDataRead event, Emitter emit) async {
     try {
       final String uid = event.credential.user!.uid;
-      print(uid);
-      if (!state.loggedIn) {
-        final DocumentSnapshot userData =
-            await FirebaseFirestore.instance.collection("Users").doc(uid).get();
-        print("$userData \n");
-        final String userName = await userData.get("userName") as String;
-        final String accountLevel =
-            await userData.get("accountLevel") as String;
-        final List messages = await userData.get("messages") as List<dynamic>;
+      print("uid: $uid");
 
-        final List senders =
-            await userData.get("messageSenders") as List<dynamic>;
+      if (!state.loggedIn) {
+        final DocumentSnapshot userData = await FirebaseFirestore.instance.doc("Users/$uid").get();
+
+        final String userName = userData.get("userName") as String;
+        final String accountLevel = userData.get("accountLevel") as String;
+        final List<dynamic> messages = userData.get("messages") as List<dynamic>;
+        final List<dynamic> senders = userData.get("messageSenders") as List<dynamic>;
         final List<Message> decodedMessages = <Message>[];
-        final int credits = await userData.get("credits");
+        final int credits = userData.get("credits") as int;
 
         AccountLevel decodedAccountLevel = AccountLevel.free;
         if (accountLevel == "associate") {
@@ -419,19 +422,22 @@ class AppBloc extends Bloc<AppEvent, AppState> {
               decodedSender = Sender.user;
             }
             decodedMessages.add(Message(
-              context: message,
+              context: message as String,
               sender: decodedSender,
             ));
           }
-        }
         emit(state.copyWith(
-            messages: decodedMessages,
-            userName: userName,
-            credits: credits,
-            credential: event.credential,
-            loggedIn: true,
-            accountLevel: decodedAccountLevel,
-            screen: Screen.chatScreen));
+          messages: decodedMessages,
+          userName: userName,
+          credits: credits,
+          credential: event.credential,
+          loggedIn: true,
+          accountLevel: decodedAccountLevel,
+          screen: Screen.chatScreen,
+        ));
+        }
+
+
       } else {
         add(const AppErrorOccured(
             details: "App failed to load data from cloud firestore!"));
@@ -440,10 +446,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     } catch (e) {
       add(AppErrorOccured(details: e.toString()));
     }
+
     print("!!!!!!!!!data read!!!!!!!!!!!!!");
   }
-  
-
 
   void appAccountMenuPageChanged(
       AppAccountMenuPageChanged event, Emitter emit) {
