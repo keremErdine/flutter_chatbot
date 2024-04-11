@@ -15,14 +15,17 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_pinecone/langchain_pinecone.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 late String prompt;
+late FirebaseAuth auth;
 void main() async {
   final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
 
-  await Firebase.initializeApp(
+  // ignore: unused_local_variable
+  final FirebaseApp firebase = await Firebase.initializeApp(
       options: const FirebaseOptions(
     apiKey: firebaseApiKey,
     appId: firebaseAppID,
@@ -32,6 +35,7 @@ void main() async {
 
   Trace appLaunch = FirebasePerformance.instance.newTrace("appLaunch");
   appLaunch.start();
+  auth = FirebaseAuth.instance;  
 
   final remoteConfig = FirebaseRemoteConfig.instance;
   await remoteConfig.setConfigSettings(

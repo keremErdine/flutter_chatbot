@@ -284,8 +284,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         password: event.password,
       ).then((value)
       {
-        UserCredential credential = value;
-        add(AppFirebaseDataRead(credential: credential));
+        add(const AppFirebaseDataRead());
       });
       add(AppMessageWritten(
         message: Message(
@@ -333,7 +332,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         password: event.password,
       );
       _userSetup(uid: credential.user!.uid, userName: event.userName);
-      add(AppFirebaseDataRead(credential: credential));
+      add(const AppFirebaseDataRead());
       final SharedPreferences prefs = await state.prefs;
       prefs.setString("email", event.email);
       prefs.setString("password", event.password);
@@ -393,7 +392,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void appFirebaseDataRead(AppFirebaseDataRead event, Emitter emit) async {
     try {
-      final String uid = event.credential.user!.uid;
+      final String uid = auth.currentUser!.uid;
       print("uid: $uid");
 
       if (!state.loggedIn) {
@@ -430,7 +429,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           messages: decodedMessages,
           userName: userName,
           credits: credits,
-          credential: event.credential,
           loggedIn: true,
           accountLevel: decodedAccountLevel,
           screen: Screen.chatScreen,

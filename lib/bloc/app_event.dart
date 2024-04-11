@@ -69,8 +69,7 @@ class AppAccountMenuPageChanged extends AppEvent {
 }
 
 class AppFirebaseDataRead extends AppEvent {
-  const AppFirebaseDataRead({required this.credential});
-  final UserCredential credential;
+  const AppFirebaseDataRead();
 }
 
 @immutable
